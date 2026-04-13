@@ -87,7 +87,7 @@ const getFlagEmoji = (countryCode) => {
         <div className="flex flex-col items-center mb-8">
           <img src="./logo.png" alt="Logo" className="h-12 w-12 mb-2" />
           <h2 className="text-3xl font-bold text-blue-700 mb-2">Create Your Account</h2>
-          <p className="text-gray-500 text-center">Sign up to get your API key and start generating invoices instantly.</p>
+          <p className="text-gray-500 text-center">Start Automating Your Freelance Work!</p>
         </div>
         {apiKey  ?  (
           <>
@@ -153,7 +153,17 @@ const getFlagEmoji = (countryCode) => {
                     </option>
                   ))}
                 </select>
-              
+
+                {/* <input
+  type="text"
+  name="organizationName"
+  placeholder="Company / Business Name"
+  value={form.organizationName}
+  onChange={handleChange}
+  required
+  className="w-full p-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors text-lg"
+/>
+               */}
             
             
             <input
@@ -178,9 +188,9 @@ const getFlagEmoji = (countryCode) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg"
+              className="cursor-pointer w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg"
             >
-              {loading ? 'Registering...' : 'Register & Get API Key'}
+              {loading ? 'Registering...' : 'Start Free — No Credit Card'}
             </button>
           </form>
         )}

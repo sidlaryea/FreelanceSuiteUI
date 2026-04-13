@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [isChangeUserProfileOpen, setIsChangeUserProfileOpen] = useState(false);
   const [activities, setActivities] = useState([]);
   
+  
   dayjs.extend(relativeTime);
   
   
@@ -59,7 +60,7 @@ const profileImageUrl = userProfile.profilePic
 
   const handleSignOut = () => {
     localStorage.clear();
-    window.location.replace ("/InvoiceAPI_LandingPage/login") // Redirect to home page after sign out
+    window.location.replace ("./login") // Redirect to home page after sign out
     
     
   };

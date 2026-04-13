@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home'; // Your current content moved here
 import Register from './Register'; // New signup page
 import Login from './login'; // New login page
-import Dashboard from './Dashboard'; // New dashboard page
+import Dashboard from './Dashboard2'; // New dashboard page
 import CreateInvoice from './Create-invoice'; // New create invoice page
 import InvoiceDashboardPage from './InvoicedashboardPage'; // New invoice dashboard page
 import DashboardLayout from './components/DashboardLayout'; // New dashboard layout component
@@ -21,6 +21,13 @@ import SettingsPage from './SettingsPage';
 import TaxPage from './taxpage';
 import AuditPage from './AuditPage';
 import ReportPage from './ReportPage';
+import OnboardPage from './CompleteSetup2';
+import PublicProposalPage from "./PublicProposalPage";
+import ProjectOverviewPage from "./ProjectOverviewPage";
+import ProjectOverviewPreviewPage from "./ProjectOverviewPreviewPage";
+import ProposalDraftEditorPage from './ProposalDraftEditorPage';
+import ProposalDraftPage from './ProposalDraftPage';
+
 
 
 
@@ -31,12 +38,23 @@ function App() {
 
   return (
     
-      <Router basename="/InvoiceAPI_LandingPage">
+      <Router basename="/FreelanceLandingPage">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="/dashboard" element={<Dashboard />} />{/* DashboardPage*/}
+          {/* Public Proposal */}
+        <Route path="/p/:token" element={<PublicProposalPage />} />
+
+
+
+
+
+
+
+
           <Route path="/invoicedashboard" element={<InvoiceDashboardPage />} /> {/* Redirect to Dashboard for /invoicedashboard */}
           <Route path="/create-invoice" element={<CreateInvoice />} /> {/* Redirect all other paths to Home */}
           <Route path="/DashboardLayout" element={<DashboardLayout />} />
@@ -54,6 +72,15 @@ function App() {
           <Route path="/Taxpage" element={<TaxPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/AuditPage" element={<AuditPage />} /> {/* Redirect all other paths to Home */}
           <Route path="ReportPage" element={<ReportPage />} /> {/* Redirect all other paths to Home */}
+          <Route path="/OnboardPage" element={<OnboardPage />} /> {/* Redirect all other paths to Home */}
+          <Route path="/ProjectOverviewPage" element={<ProjectOverviewPage />} /> {/* Redirect all other paths to Home */}
+<Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
+<Route path="/ProposalDraftPage" element={<ProposalDraftPage />} />
+<Route path="/ProposalDraftEditorPage/:id" element={<ProposalDraftEditorPage />} />
+          
+
+          <Route path="*" element={<Home />} /> {/* Redirect all other paths to Home */}
+
         </Routes>
         
       </Router>

@@ -27,7 +27,7 @@ export default function Login() {
 
       
 
-      const {token,setupComplete} = response.data;
+      const {token,proposalSetupComplete} = response.data;
       
       if (token) {
         localStorage.setItem("jwtToken", token);
@@ -58,7 +58,7 @@ export default function Login() {
             },
           }
         );
-        // console.log("Full API Key Response:", apiRes.data);
+        //console.log("Full API Key Response:", apiRes.data);
         
         const apiKey = apiRes.data.key;
         if (!apiKey) {
@@ -68,13 +68,13 @@ export default function Login() {
       }
 
       localStorage.setItem("apiKey", apiKey);
-      localStorage.setItem("setupComplete", setupComplete ? "true" : "false");
+      localStorage.setItem("setupComplete", proposalSetupComplete ? "true" : "false");
 
 
-        if (setupComplete) {
+        if (proposalSetupComplete) {
         navigate("/dashboard");
       } else {
-        navigate("/complete-setup");
+        navigate("/OnboardPage");
       }
       } else {
         setError("Invalid login response.");
@@ -93,7 +93,7 @@ export default function Login() {
       <div className="max-w-md w-full bg-white shadow-lg rounded-2xl p-8" align="center">
         <img src="./logo.png" alt="Logo" className="h-12 w-12 mb-2" />
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Sign in to InvoiceAPI
+          Sign in to FreelancePro 
         </h2>
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
@@ -132,7 +132,7 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
+            className="cursor-pointer w-full py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
           >
             Sign In
           </button>
