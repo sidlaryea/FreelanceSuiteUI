@@ -92,9 +92,16 @@ export default function CompleteSetup() {
     
     clientName: "", clientEmail: "", countryId: "", companyName: "",
     phone: "", address: "", projectTitle: "", projectDescription: "",
-    industry: "", budgetRange: "", timeline: "", coreproblem: "", businessgoal: "",
+    industry: "",
+    budgetRange: "",
+    budgetCurrency: "",
+    timeline: "",
+    coreproblem: "",
+    businessgoal: "",
     clientId: null,
-    payStackPublicKey: "", payStackSecretkey: "", paySatckCurrency: "GHS",
+    payStackPublicKey: "",
+    payStackSecretkey: "",
+    paySatckCurrency: "GHS",
     accountHolderName: "", accountNumber: "", bankName: "",
     allowPartialPayments: false, allowOfflinePayments: false,
   });
@@ -102,8 +109,10 @@ export default function CompleteSetup() {
   const [tab, setTab] = useState(0);
   const [tabKey, setTabKey] = useState(0);
   const [paystack, setPaystack] = useState(false);
-  const [logoFile, setLogoFile] = useState(null);
-  const [logoPreview, setLogoPreview] = useState(null);
+  const [orgLogoFile, setOrgLogoFile] = useState(null);
+  const [orgLogoPreview, setOrgLogoPreview] = useState(null);
+  const [clientLogoFile, setClientLogoFile] = useState(null);
+  const [clientLogoPreview, setClientLogoPreview] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
   const [showRawPreview, setShowRawPreview] = useState(false);
@@ -122,9 +131,20 @@ export default function CompleteSetup() {
   const STEPS = ["Organization Details","Client Info", "Project Info", "Preview", "Setup Payment"];
 
   const ch = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-  const onFile = (e) => {
+  const onOrgFile = (e) => {
     const f = e.target.files[0];
-    if (f) { setLogoFile(f); setLogoPreview(URL.createObjectURL(f)); }
+    if (f) { 
+      setOrgLogoFile(f); 
+      setOrgLogoPreview(URL.createObjectURL(f)); 
+    }
+  };
+  
+  const onClientFile = (e) => {
+    const f = e.target.files[0];
+    if (f) { 
+      setClientLogoFile(f); 
+      setClientLogoPreview(URL.createObjectURL(f)); 
+    }
   };
   const goTab = (n) => { 
     setTab(n);
@@ -163,17 +183,47 @@ export default function CompleteSetup() {
 
   const progress = (tab / (STEPS.length - 1)) * 100;
 
+  // eslint-disable-next-line no-unused-vars
+  const [currencies, setCurrencies] = useState([]);
+
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const res = await axios.get("http://localhost:5214/api/Currency/GetAllCurrencies");
+        const mapped = (res.data || []).filter(c => c.isActive ?? true).map(c => ({
+          id: c.id,
+          code: c.currencyCode || c.code,
+          name: c.currencyName || c.currencyCode || c.code,
+          symbol: c.symbol || "",
+        }));
+        setCurrencies(mapped);
+
+        if (!form.budgetCurrency && mapped.length > 0) {
+          const defaultCode = "GHS";
+          const initial = mapped.find(c => c.code === defaultCode) || mapped[0];
+          setForm(prev => ({ ...prev, budgetCurrency: initial.code }));
+        }
+      } catch (e) {
+        console.error("Failed to fetch currencies", e);
+      }
+    };
+
+    fetchCurrencies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 //Save Organization info///
 const saveOrganizationInfo = async () => {
   const token = localStorage.getItem("jwtToken");
   const apiKey = localStorage.getItem("apiKey");
-  const orgInfoPayload = {
+
+const orgInfoPayload = {
     name: form.OrganizationName,
     industry: form.OrganizationIndustry,
     email: form.organizationEmail,
-    phone:form.organizationPhone,
-    address:form.organizationAddress,
-    logourl: form.organizationLogoUrl,
+    phone: form.organizationPhone,
+    address: form.organizationAddress,
     website: form.organizationWebsite,
 };
 const response = await axios.post(
@@ -189,9 +239,9 @@ const response = await axios.post(
 
 const orgId = response.data.id;
 // Upload Logo (if selected)
-if (logoFile && orgId) {
+if (orgLogoFile && orgId) {
   const logoData = new FormData();
-  logoData.append("file", logoFile);
+  logoData.append("file", orgLogoFile);
   await axios.post(
     `http://localhost:5214/proposal/api/Organization/update-logo/${orgId}`,
 
@@ -242,9 +292,9 @@ const saveClientInfo = async () => {
   setForm(prev => ({ ...prev, clientId }));
 
   // Upload Logo (if selected)
-  if (logoFile && clientId) {
+  if (clientLogoFile && clientId) {
     const logoData = new FormData();
-    logoData.append("file", logoFile);
+    logoData.append("file", clientLogoFile);
 
     await axios.post(
       `http://localhost:5214/proposal/api/Client/update-logo/${clientId}`,
@@ -262,7 +312,10 @@ const saveClientInfo = async () => {
   return clientId;
 };
 
-const saveProjectInfo = async () => {
+  const saveProjectInfo = async () => {
+
+
+
 
   const token = localStorage.getItem("jwtToken");
   const apiKey = localStorage.getItem("apiKey");
@@ -273,6 +326,7 @@ const saveProjectInfo = async () => {
     projectDescription: form.projectDescription,
     industry: form.industry,
     budgetRange: form.budgetRange,
+    budgetCurrency:form.budgetCurrency,
     timeline: form.timeline,
     coreProblem: form.coreproblem,
     businessGoal: form.businessgoal
@@ -595,7 +649,7 @@ const validateBeforeFinish = () => {
       <F label="Website" span2>
         <input
           className="cs-input"
-          type="email"
+          type="url"
           name="organizationWebsite"
           placeholder="www.SidConsult.com"
           value={form.organizationWebsite}
@@ -603,22 +657,23 @@ const validateBeforeFinish = () => {
         />
       </F>
 
+
       <F label="Organization Logo (Optional)" span2>
         <label className="cs-file-zone">
           <div className="cs-upload-ico"><UploadIco /></div>
-          <span className={`cs-file-text${logoFile ? " has" : ""}`}>
-            {logoFile
-              ? logoFile.name
+          <span className={`cs-file-text${orgLogoFile ? " has" : ""}`}>
+            {orgLogoFile
+              ? orgLogoFile.name
               : "Click to upload your logo (PNG, JPG, SVG)"}
           </span>
-          {logoPreview && (
+          {orgLogoPreview && (
             <img
-              src={logoPreview}
+              src={orgLogoPreview}
               className="cs-logo-thumb"
               alt="preview"
             />
           )}
-          <input type="file" accept="image/*" onChange={onFile} />
+          <input type="file" accept="image/*" onChange={onOrgFile} />
         </label>
       </F>
 
@@ -657,11 +712,11 @@ const validateBeforeFinish = () => {
                 <F label="Client Logo" span2>
                   <label className="cs-file-zone">
                     <div className="cs-upload-ico"><UploadIco /></div>
-                    <span className={`cs-file-text${logoFile ? " has" : ""}`}>
-                      {logoFile ? logoFile.name : "Click to upload client logo (PNG, JPG, SVG)"}
+                    <span className={`cs-file-text${clientLogoFile ? " has" : ""}`}>
+                      {clientLogoFile ? clientLogoFile.name : "Click to upload client logo (PNG, JPG, SVG)"}
                     </span>
-                    {logoPreview && <img src={logoPreview} className="cs-logo-thumb" alt="preview" />}
-                    <input type="file" accept="image/*" onChange={onFile} />
+                    {clientLogoPreview && <img src={clientLogoPreview} className="cs-logo-thumb" alt="preview" />}
+                    <input type="file" accept="image/*" onChange={onClientFile} />
                   </label>
                 </F>
               </div>
@@ -687,18 +742,43 @@ const validateBeforeFinish = () => {
                   <textarea className="cs-textarea" name="businessgoal" placeholder="E.g. Increase conversions by 40% in 6 months" value={form.businessgoal} onChange={ch} rows={2} />
                 </F>
                 <F label="Industry">
-                  <select className="cs-select" name="industry" value={form.industry}
+                  <select className="cs-select " style={{ width: "80%" }} name="industry" value={form.industry}
                     onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}>
-                    <option value="">Select industry…</option>
+                    <option value="">Select Industry…</option>
                     {industries.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
                   </select>
                 </F>
-                <F label="Budget Range">
-                  <input className="cs-input" name="budgetRange" placeholder="E.g. $5,000 – $15,000" value={form.budgetRange} onChange={ch} />
+                <F label="Budget Range" span1>
+                  <div className="cs-budget-row" style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: 10 }}>
+                    <select
+                      className="cs-select"
+                      name="budgetCurrency"
+                      value={form.budgetCurrency}
+                      onChange={(e) => setForm(f => ({ ...f, budgetCurrency: e.target.value }))}
+                    >
+                      {currencies.map((c) => (
+                        <option key={c.id ?? c.code} value={c.code}>
+                          {c.code} — {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      className="cs-input"
+                      style={{ width: "100%" }}
+
+                      name="budgetRange"
+                      placeholder="E.g. 5,000 – 15,000"
+                      value={form.budgetRange}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setForm(f => ({ ...f, budgetRange: value }));
+                      }}
+                    />
+                  </div>
                 </F>
                 <F label="Timeline" span2>
                   <select className="cs-select" name="timeline" value={form.timeline} onChange={ch}>
-                    <option value="">Select timeline…</option>
+                    <option value="">Select Timeline…</option>
                     <option value="mvp_2_4_weeks">MVP — 2 to 4 weeks</option>
                     <option value="standard_1_2_months">Standard build — 1 to 2 months</option>
                     <option value="complex_3_6_months">Complex project — 3 to 6 months</option>

@@ -23,6 +23,14 @@ export default function DashboardLayout({
    useAuthCheck();
     useApiInterceptor();
   
+  // Create userData object from userProfile or construct from available props
+  const userData = userProfile ? {
+    ...userProfile,
+    // Map profilePic to profileImageUrl if needed (different field names)
+    profileImageUrl: userProfile.profileImageUrl || userProfile.profilePic || profileImageUrl,
+  } : {
+    profileImageUrl: profileImageUrl,
+  };
   
   return (
     <div className="h-screen overflow-hidden">
@@ -45,6 +53,7 @@ export default function DashboardLayout({
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           dialogProps={dialogProps}
+          userData={userData}
         />
       </div>
 

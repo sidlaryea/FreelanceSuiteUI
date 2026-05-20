@@ -7,9 +7,20 @@ import ProposalCoverPage from "./components/CoverPage";
 import { FunnelStageEnum,funnelStageConfig  } from "./components/funnelStageConfig";
 import ProposalMetaSection from "./components/ProposalMetaSection";
 import PricingTable from "./components/PricingTable";
+import ExecutiveSummary from "./components/ExecutiveSummary";
+import TermsAndConditions from "./components/TermsAndConditions";
+import ProposalScopeSection from "./components/ProposalScopeSection";
+import TimelineSection from "./components/TimelineSection";
+import DeliverableSection from "./components/DeliverableSection";
+import ProposalPreviewModal from "./components/ProposalPreviewModal";
+
 
 
 // Icons (same as ProjectOverviewPreviewPage)
+
+// Budget currency used by PricingTable
+
+
 const Icon = {
   dashboard: <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
   proposals: <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path d="M9 12h6M9 16h4M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>,
@@ -33,15 +44,42 @@ export default function ProposalEditorPage() {
   const [userData, setUserData] = useState(null);
   const [activeNav, setActiveNav] = useState("Proposals");
   const [pricingItems, setPricingItems] = useState([]);
+  const [executiveSummary, setExecutiveSummary] = useState("");
+  const [ScopePreview, setScopePreview] = useState("");
+  const [terms, setTerms] = useState("");
+  const [signature, setSignature] = useState("");
+  const [timeline, setTimeline] = useState("");
+  const [deliverables, setDeliverables] = useState("");
+  
+  const [showPreview, setShowPreview] = useState(false);
+  
+  
 
   useEffect(() => {
     fetchDraft();
     fetchUserData();
   }, [id]);
 
+const draftId =id; // Get draftId from URL
 
 
 
+const getStatusStyles = (color) => {
+  switch (color) {
+    case "green":
+      return "bg-green-50 text-green-600 border-green-200";
+    case "blue":
+      return "bg-blue-50 text-blue-600 border-blue-200";
+    case "red":
+      return "bg-red-50 text-red-600 border-red-200";
+    case "yellow":
+      return "bg-yellow-50 text-yellow-700 border-yellow-200";
+    case "purple":
+      return "bg-purple-50 text-purple-600 border-purple-200";
+    default:
+      return "bg-amber-50 text-amber-600 border-amber-200";
+  }
+};
 
   
 
@@ -59,9 +97,16 @@ export default function ProposalEditorPage() {
           }
         }
       );
-
+      setExecutiveSummary(response.data.executiveSummary || "");
       setDraft(response.data);
       setContentHtml(response.data.contentHtml || "");
+      setScopePreview(response.data.scopePreview || "");
+      setTimeline(response.data.timelinePreview || "");
+      setTerms(response.data.termsSectionHtml || "");
+      setSignature(response.data.signnatureSectionHtml || "");
+      setDeliverables(response.data.deliverablesPreview || "");
+      
+// budgetCurrency is passed directly to PricingTable via draft.budgetcurrency/budgetCurrency
 
     } catch (error) {
       console.error("Failed to fetch draft", error);
@@ -98,7 +143,7 @@ useEffect(() => {
     }
   };
 
-  // ✅ Save Draft
+  // ✅ Save Draft After editing
   const saveDraft = async () => {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
@@ -107,9 +152,15 @@ useEffect(() => {
       await axios.put(
         `http://localhost:5214/Proposal/api/ProposalDraft/${id}`,
         {
-          contentHtml,
+          executiveSummary: executiveSummary,
+          contentHtml: contentHtml,
+          scopePreview: ScopePreview,
+          deliverablesPreview: deliverables,
+          timelinePreview: timeline,
           pricingTableJson: JSON.stringify(pricingItems),
-          pricingItems
+          pricingItems: pricingItems,
+          termsAndConditionsHtml: terms,
+          signatureSectionHtml: signature,
         },
         {
           headers: {
@@ -128,6 +179,7 @@ useEffect(() => {
 
 const stageKey = FunnelStageEnum[draft?.stage] || "DraftStarted";
 const config = funnelStageConfig[stageKey];
+
   
 
   // ✅ Generate Final Proposal
@@ -137,7 +189,8 @@ const config = funnelStageConfig[stageKey];
 
     try {
       const response = await axios.post(
-        `http://localhost:5214/Proposal/api/ProposalDraft/${id}/finalize`,
+        `http://localhost:5214/Proposal/api/Proposal/generate-from-draft/${id}`,
+        
         {},
         {
           headers: {
@@ -193,79 +246,201 @@ const config = funnelStageConfig[stageKey];
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-slate-100 px-6 py-8">
+  <main className="flex-1 overflow-y-auto bg-slate-100 px-6 py-8">
+  <div className="max-w-5xl mx-auto space-y-8">
 
-  <div className="max-w-5xl mx-auto">
+    {/* COVER */}
+    <ProposalCoverPage 
+      userData={draft?.organization} 
+      client={draft?.client} 
+      
+    />
 
-<ProposalCoverPage userData={draft?.organization} client={draft?.client} />
-<ProposalMetaSection userData={draft?.organization} client={draft?.client} overview={draft?.projectOverview}/>
+    {/* META */}
+    <ProposalMetaSection 
+      userData={draft?.organization} 
+      client={draft?.client} 
+      overview={draft?.projectOverview}
+    />
 
+    <ProposalPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)}
+    executiveSummary={executiveSummary} 
+    htmlContent={contentHtml} 
+    pricingItems={pricingItems}
+    ScopePreview={ScopePreview} 
+    timelinePreview={timeline}
+    terms={terms}
+    signature={signature}
+    draftId={draftId}
+    userData={draft?.organization}
+    client={draft?.client}
+    currency={draft.budgetCurrency}
+    />
 
     {/* DOCUMENT SHEET */}
-<div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
+      {/* HEADER */}
+      <div className="sticky top-0 z-50 bg-white border-b border-slate-100 px-8 py-4 flex justify-between items-center">
+        <div>
+          <p className="text-xs text-slate-400">
+            {config?.message || "Draft · editing in progress"}
+          </p>
 
+          {draft?.time && (
+            <p className="text-xs text-slate-400">
+              Last saved: {new Date(draft.time).toLocaleDateString()}{" "}
+              {new Date(draft.updatetime).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          )}
+        </div>
 
-  {/* HEADER */}
-  <div className="sticky top-0 z-50 bg-white border-b border-slate-100 px-8 py-4 flex justify-between items-center">
-    <div>
-      
-      <p className="text-xs text-slate-400 mt-0.5">{config?.message || "Draft · editing in progress"}</p>
-      <p><span className="text-xs text-slate-400">{draft?.time
-        ? `Last saved:${new Date(draft.time).toLocaleDateString()} ${new Date(draft.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-        : ""} </span></p>
-    </div>
-    
-    <span
-  className={`text-xs rounded-full px-3 py-1 border ${
-    config?.color === "green"
-      ? "bg-green-50 text-green-600 border-green-200"
-      : config?.color === "blue"
-      ? "bg-blue-50 text-blue-600 border-blue-200"
-      : config?.color === "red"
-      ? "bg-red-50 text-red-600 border-red-200"
-      : config?.color === "yellow"
-      ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-      : config?.color === "purple"
-      ? "bg-purple-50 text-purple-600 border-purple-200"
-      : "bg-amber-50 text-amber-600 border-amber-200"
-  }`}
->
-  {config?.label || "Draft"}
-</span>
-    
+        <span className={`text-xs rounded-full px-3 py-1 border ${getStatusStyles(config?.color)}`}>
+          {config?.label || "Draft"}
+        </span>
+      </div>
+
+      {/* BODY (🔥 THIS WAS MISSING) */}
+      <div className="px-8 py-10 space-y-10">
+
+        {/* EXECUTIVE SUMMARY */}
+        <section>
+  <h2 className="text-xl font-semibold mb-3">Executive Summary</h2>
+
+  <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 max-h-60 overflow-y-auto">
+    <ProposalEditor
+      content={executiveSummary}
+      onChange={setExecutiveSummary}
+      placeholder="Write a compelling summary of the project, value, and expected outcome..."
+      compact 
+    />
   </div>
+</section>
 
-  {/* EDITOR — no extra padding wrapper, editor handles its own spacing */}
-  <ProposalEditor content={contentHtml} onChange={setContentHtml} />
- <PricingTable
-  initialItems={pricingItems}
-  onChange={(items) => setPricingItems(items)}
-/>
-  
-</div>
+        {/* EDITOR */}
+        <section>
+          <ProposalEditor 
+            content={contentHtml} 
+            onChange={setContentHtml} 
+          />
+        </section>
 
-{/* ACTION BAR */}
-<div className="flex justify-end gap-3 mt-5">
-  <button
-    onClick={() => navigate(-1)}
-    className="px-5 py-2 text-sm text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
-  >
-    Cancel
-  </button>
-  <button
-    onClick={saveDraft}
-    className="px-5 py-2 text-sm bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors cursor-pointer"
-  >
-    Save draft
-  </button>
-  <button
-    onClick={generateFinal}
-    className="px-5 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors cursor-pointer"
-  >
-    Generate final proposal
-  </button>
-</div>
+        {/* SCOPE OF WORK */}
+        <section>
+          <div className="space-y-4">
+            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 max-h-40 overflow-y-auto">
+              <ProposalEditor 
+                content={ScopePreview} 
+                onChange={setScopePreview}
+                placeholder="Define the project scope, deliverables, timeline, and success criteria..."
+                compact
+              />
+            </div>
+            {/* Preview */}
+            <ProposalScopeSection scopeHtml={ScopePreview} />
+          </div>
+        </section>
+
+          {/*DELIVERABLES*/}
+          <section>
+  <div className="space-y-4">
+    <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 max-h-40 overflow-y-auto">
+      <ProposalEditor
+        content={deliverables}
+        onChange={setDeliverables}
+        placeholder="List key deliverables, milestones, and project phases..."
+        compact
+      />
+    </div>
+    {/* Preview */}
+    <DeliverableSection deliverablesHtml={deliverables} />
+  </div>
+</section>
+
+
+        {/* TIMELINE */}
+        <section>
+          <div className="space-y-4">
+            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 max-h-40 overflow-y-auto">
+              <ProposalEditor 
+                content={timeline} 
+                onChange={setTimeline}
+                placeholder="Outline project phases, milestones, and estimated durations..."
+                compact
+              />
+            </div>
+            {/* Preview */}
+            <TimelineSection timelineHtml={timeline} />
+          </div>
+        </section>
+
+
+        {/* PRICING */}
+        <section>
+          {(() => {
+            const draftBudgetCurrency = draft.budgetCurrency ;
+
+            return (
+              <PricingTable
+                initialItems={pricingItems}
+                onChange={setPricingItems}
+                budgetCurrency={draftBudgetCurrency}
+              />
+            );
+          })()}
+        </section>
+
+
+
+        {/* TERMS */}
+        {terms && (
+          <section>
+  <h2 className="text-xl font-semibold mb-3">Terms & Conditions</h2>
+
+  <ProposalEditor
+    content={terms}
+    onChange={setTerms}
+    placeholder="Define payment terms, delivery expectations, and legal conditions..."
+    compact
+  />
+</section>
+        )}
+
+        {/* SIGNATURE */}
+        {signature && (
+          <section>
+                    
+                    <ProposalEditor
+                      content={signature}
+                      onChange={setSignature}
+                      placeholder="Add signature lines, dates, and acceptance text..."
+                      compact
+                    />
+                  </section>
+        )}
+
+      </div>
+    </div>
+
+    {/* ACTION BAR */}
+    <div className="flex justify-end gap-3">
+      
+
+      <button onClick={saveDraft} className="px-5 py-2 text-sm bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition cursor-pointer flex items-center gap-2">Save draft</button>
+
+      <button onClick={async () => { 
+        console.log('Preview - ScopePreview length:', ScopePreview?.length || 0, ScopePreview?.substring(0, 100));
+        
+        setShowPreview(true); 
+      }} className="bg-slate-800 text-white px-4 py-2 rounded-lg cursor-pointer">Preview</button>
+
+      <button onClick={generateFinal} className="px-5 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition cursor-pointer flex items-center gap-2">
+        Generate Final Proposal
+      </button>
+    </div>
 
   </div>
 </main>

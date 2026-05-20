@@ -15,27 +15,74 @@ const Icon = {
   chevron:   <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>,
 };
 
-export default function ProposalDraftPage() {
+export default function ProposalListPage() {
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeNav, setActiveNav] = useState("Proposals");
   const [userData, setUserData] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("All");
   const itemsPerPage = 10;
 
   const navigate = useNavigate();
 
+  const mapFunnelToStatus = (stage) => {
+    switch (stage) {
+      case "DraftStarted":
+      case "ProposalPreviewGenerated":
+        return { label: "Draft", color: "bg-slate-100 text-slate-700" };
+
+      case "EmailCaptured":
+      case "EstimateViewed":
+      case "ConsultationRequested":
+        return { label: "Engaged", color: "bg-blue-100 text-blue-700" };
+
+      case "ConvertedToProposal":
+        return { label: "Ready", color: "bg-indigo-100 text-indigo-700" };
+
+      case "ProposalSent":
+        return { label: "Sent", color: "bg-amber-100 text-amber-700" };
+
+      case "ProposalAccepted":
+        return { label: "Won", color: "bg-emerald-100 text-emerald-700" };
+
+      case "ProposalRejected":
+      case "ClosedLost":
+        return { label: "Lost", color: "bg-red-100 text-red-700" };
+
+      case "InvoiceAccepted":
+      case "PaymentInitiated":
+        return { label: "Payment", color: "bg-purple-100 text-purple-700" };
+
+      case "ProjectActive":
+        return { label: "In Progress", color: "bg-cyan-100 text-cyan-700" };
+
+      case "ProjectCompleted":
+        return { label: "Completed", color: "bg-green-100 text-green-700" };
+
+      default:
+        return { label: "Draft", color: "bg-slate-100 text-slate-700" };
+    }
+  };
+
   // Filter and pagination
   const filteredDrafts = drafts.filter(draft => {
-  const projectTitle = draft.projectOverview?.title || "";
-  const clientName = draft.client?.name || "";
+    const projectTitle = draft.projectOverview?.title || "";
+    const clientName = draft.client?.name || "";
 
-  return (
-    projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    clientName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-});
+    const matchesSearch =
+      projectTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      clientName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const status = mapFunnelToStatus(draft.funnelStageDescription).label;
+
+    const matchesTab =
+      activeTab === "All" || status === activeTab;
+
+    return matchesSearch && matchesTab;
+  });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredDrafts.slice(indexOfFirstItem, indexOfLastItem);
@@ -72,6 +119,31 @@ console.error("Failed to load proposal drafts", error);
     }
   };
 
+ const generateFinal = (draftId) => {
+    const token = localStorage.getItem("jwtToken");
+    const apiKey = localStorage.getItem("apiKey");
+
+    return async () => {
+      try {
+        const response = await axios.post(
+          `http://localhost:5214/Proposal/api/Proposal/generate-from-draft/${draftId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-API-KEY": apiKey
+            }
+          }
+        );
+
+        navigate(`/final-proposal/${response.data.id}`);
+      } catch (error) {
+        console.error(error);
+        alert("Failed to generate final proposal");
+      }
+    };
+  };
+
   const fetchUserData = async () => {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
@@ -92,12 +164,7 @@ console.error("Failed to load proposal drafts", error);
     }
   };
 
-  const getStageDisplay = (stage) => {
-    return {
-      label: stage || 'Draft',
-      color: 'bg-slate-100 text-slate-700'
-    };
-  };
+ 
 
   const formatDate = (dateString) => {
     return dateString ? new Date(dateString).toLocaleDateString('en-US', { 
@@ -108,6 +175,78 @@ console.error("Failed to load proposal drafts", error);
       minute: '2-digit'
     }) : 'Never';
   };
+
+  const getActions = (item) => {
+    switch (item.funnelStage) {
+
+      case 0:
+      case 1:
+        return (
+          <>
+            <button onClick={() => navigate(`/ProposalDraftEditorPage/${item.id}`)} className="text-blue-600 hover:underline text-sm cursor-pointer">
+              Edit
+            </button>
+            <button className="text-indigo-600 hover:underline text-sm cursor-pointer" onClick={generateFinal(item.id)}>
+              Generate
+            
+            </button>
+          </>
+        );
+
+
+    case 7:
+      return (
+        <>
+          <button onClick={() => navigate(`/ProposalDraftEditorPage/${item.id}`)} className="text-blue-600 hover:underline text-sm cursor-pointer">
+              Edit
+            </button>
+          <button onClick={() => navigate(`/final-proposal/${item.proposalId}`)} className="text-blue-600 hover:underline text-sm cursor-pointer">
+            View
+          </button>
+          <button className="text-emerald-600 hover:underline text-sm cursor-pointer">
+            Send
+          </button>
+        </>
+      );
+
+    case 8:
+      return (
+        <>
+          <button onClick={() => navigate(`/proposal/${item.proposalId}`)} className="text-blue-600 hover:underline text-sm cursor-pointer">
+            View
+          </button>
+          <button className="text-slate-600 hover:underline text-sm cursor-pointer">
+            Copy Link
+          </button>
+        </>
+      );
+
+    case 9:
+      return (
+        <>
+          <button onClick={() => navigate(`/proposal/${item.proposalId}`)} className="text-blue-600 hover:underline text-sm cursor-pointer">
+            View
+          </button>
+          <button className="text-emerald-600 hover:underline text-sm">
+            Create Invoice
+          </button>
+        </>
+      );
+
+    case 10:
+      return (
+        <button className="text-cyan-600 hover:underline text-sm cursor-pointer">
+          View Project
+        </button>
+      );
+
+    default:
+      return null;
+  }
+};
+
+
+
 
   if (loading) {
     return (
@@ -151,8 +290,8 @@ console.error("Failed to load proposal drafts", error);
         <main className="flex-1 overflow-y-auto px-7 py-6 space-y-5">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-[19px] font-semibold text-slate-900 tracking-tight">Proposal Drafts</h1>
-              <p className="text-sm text-slate-400 mt-0.5">Manage your AI-generated proposal drafts</p>
+              <h1 className="text-[19px] font-semibold text-slate-900 tracking-tight">Proposals </h1>
+              <p className="text-sm text-slate-400 mt-0.5">Track your deals and conversions</p>
             </div>
             <button
               onClick={() => navigate('/ProjectOverviewPage')}
@@ -162,6 +301,23 @@ console.error("Failed to load proposal drafts", error);
               Generate New
             </button>
           </div>
+          <div className="flex gap-2 mt-4">
+                  {["All", "Draft", "Sent", "Won", "Lost"].map(tab => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-4 py-2 rounded-lg text-sm ${
+                        activeTab === tab
+                          ? "bg-slate-900 text-white"
+                          : "bg-white border border-slate-200 text-slate-600"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+
+
 
           {currentItems.length === 0 ? (
             <div className="bg-white rounded-xl border border-slate-100 p-12 text-center">
@@ -185,45 +341,55 @@ console.error("Failed to load proposal drafts", error);
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-slate-100">
                   <tr className="text-left text-sm text-gray-600">
-                    <th className="p-4 text-[11px] font-medium text-slate-400">Project</th>
-                    <th className="p-4 text-[11px] font-medium text-slate-400">Client</th>
-                    <th className="p-4 text-[11px] font-medium text-slate-400">Stage</th>
-                    <th className="p-4 text-[11px] font-medium text-slate-400">Last Modified</th>
-                    <th className="p-4 text-[11px] font-medium text-slate-400 w-32">Actions</th>
-                  </tr>
+                    <th className="p-4 text-[14px] text-slate-400"></th>
+                    <th className="p-4 text-[14px] text-slate-400">Project</th>
+                    <th className="p-4 text-[14px] text-slate-400">Client</th>
+                    <th className="p-4 text-[14px] text-slate-400">Status</th>
+                    <th className="p-4 text-[14px] text-slate-400">Client Estimate</th>
+                    <th className="p-4 text-[14px] text-slate-400">Last Activity</th>
+                    <th className="p-4 text-[14px] text-slate-400">Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map((draft) => {
-                    const stageDisplay = getStageDisplay(draft.stage);
-                    return (
-                      <tr key={draft.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors">
-                        <td className="p-4">
-                          <p className="text-sm font-medium text-slate-800">
-                            {draft.title|| "Untitled Draft"}
-                          </p>
-                        </td>
-                        <td className="p-4 text-sm text-slate-600">
-                          {draft.client?.name || "No client"}
-                        </td>
-                        <td className="p-4">
-                          <span className={`px-3 py-1 rounded-full text-xs ${stageDisplay.color}`}>
-                            {stageDisplay.label}
-                          </span>
-                        </td>
-                        <td className="p-4 text-sm text-slate-600">
-                          {formatDate(draft.createdAt)}
-                        </td>
-                        <td className="p-4">
-                          <button
-                            onClick={() => navigate(`/ProposalDraftEditorPage/${draft.id}`)}
-                            className="text-blue-600 hover:underline text-sm cursor-pointer transition-colors font-medium"
-                          >
-                            Preview & Edit
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {currentItems.map((item) => {
+  const stageDisplay = mapFunnelToStatus(item.funnelStageDescription);
+
+  return (
+    
+    <tr key={item.id} className="border-b hover:bg-slate-50">
+      <img src={`http://localhost:5078${item.client?.logo}`}
+      className="w-12 h-12 object-contain"
+      /> 
+      <td className="p-4 text-sm font-medium text-slate-800">
+        {item.title || "Untitled"}
+      </td>
+
+      <td className="p-4 text-sm text-slate-600">
+        {item.client?.name || "No client"}
+      </td>
+
+      <td className="p-4">
+        <span className={`px-3 py-1 rounded-full text-xs ${stageDisplay.color}`}>
+          {stageDisplay.label}
+        </span>
+      </td>
+
+      <td className="p-4 text-sm font-semibold text-slate-900">
+        {item.costEstimatePreview|| "No client"}
+      </td>
+
+      <td className="p-4 text-sm text-slate-600">
+        {formatDate(item.updatedAt)}
+      </td>
+
+      <td className="p-4">
+        <div className="flex gap-3">
+          {getActions(item)}
+        </div>
+      </td>
+    </tr>
+  );
+})}
                 </tbody>
               </table>
 

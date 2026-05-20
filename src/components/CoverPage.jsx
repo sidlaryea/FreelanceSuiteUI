@@ -10,7 +10,14 @@ export default function ProposalCoverPage({ userData, client }) {
 
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white rounded-2xl p-10 mb-6 shadow-lg">
+    <div
+      className="text-white p-10 rounded-2xl mb-6 shadow-lg"
+      style={{
+        background: "linear-gradient(to bottom right, #0f172a, #334155)", // slate-900 → slate-700
+        WebkitPrintColorAdjust: "exact",   // tells browsers to print backgrounds
+        printColorAdjust: "exact",
+      }}
+    >
       
       <div className="flex justify-between items-start">
         
@@ -25,7 +32,7 @@ export default function ProposalCoverPage({ userData, client }) {
         {/* Logo Placeholder */}
         <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
           <img
-            src={`http://localhost:5078${client?.logo}`}
+            src={`http://localhost:5078${userData?.logoUrl || userData?.logo}  `}
             alt="Company Logo"
             className="w-12 h-12 object-contain"
           />

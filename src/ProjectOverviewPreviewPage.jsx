@@ -9,6 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
+import Sidebar from "./components/Sidebar";
 
 
 // Icons (same as Dashboard2)
@@ -25,24 +26,12 @@ const Icon = {
   arrowLeft: <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>,
 };
 
-const navGroups = [
-  { label: null, items: [
-    { icon: Icon.dashboard, label: "Dashboard", path: "/dashboard" },
-    { icon: Icon.bell, label: "AI Previews", path: "/ProjectOverviewPage" }, 
-    { icon: Icon.proposals, label: "Proposals", path: "/ProposalDraftPage" },
-    { icon: Icon.clients, label: "Clients", path: "/clients" }
-  ] },
-  { label: "Intelligence", items: [{ icon: Icon.insights, label: "Insights", path: "/insights" }] },
-  { label: "Account", items: [{ icon: Icon.billing, label: "Billing", path: "/billing" }, { icon: Icon.settings, label: "Settings", path: "/settings" }] },
-];
-
 export default function ProjectOverviewPreviewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeNav, setActiveNav] = useState("AI Previews");
   const [userData, setUserData] = useState(null);
   const [showCompleteDetailsModal, setShowCompleteDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -177,6 +166,7 @@ export default function ProjectOverviewPreviewPage() {
         businessGoal: response.data.businessGoal || "",
         industryId: resolvedIndustryId,
         budgetRange: response.data.budgetRange || "",
+        budgetCurrency:response.data.budgetCurrency || "",
         timeline: response.data.timeline || "",
         targetAudience: response.data.targetAudience || "",
         projectType: response.data.projectType || "",
@@ -275,6 +265,7 @@ useEffect(() => {
             }
           : {}),
         budgetRange: form.budgetRange,
+        budgetCurrency: form.budgetCurrency,
         timeline: form.timeline,
         businessGoal: form.businessGoal,
         targetAudience: form.targetAudience,
@@ -746,52 +737,7 @@ overview &&
   return (
     <div className="flex h-screen bg-white overflow-hidden font-outfit">
       {/* ── SIDEBAR ─────────────────────────────────────── */}
-      <aside className="w-[216px] bg-slate-950 flex flex-col flex-shrink-0">
-        <div className="h-14 px-5 flex items-center border-b border-white/[0.06]">
-          <span className="text-white font-semibold text-[15px] tracking-tight">
-            Propel<span className="text-emerald-400">AI</span>
-          </span>
-        </div>
-
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navGroups.map((group, gi) => (
-            <div key={gi} className={gi > 0 ? "mt-5" : ""}>
-              {group.label && (
-                <p className="px-2 mb-1.5 text-[10px] uppercase tracking-widest text-white/25 font-semibold">
-                  {group.label}
-                </p>
-              )}
-              {group.items.map((item) => {
-                const active = activeNav === item.label;
-                return (
-                  <button
-                    key={item.label}
-                    onClick={() => {
-                      setActiveNav(item.label);
-                      if (item.path) navigate(item.path);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm text-left transition-colors cursor-pointer
-                      ${active ? "bg-white/[0.08] text-white" : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"}`}
-                  >
-                    <span className={`cursor-pointer ${active ? "text-white" : "text-white/30"}`}>{item.icon}</span>
-                    <span className={active ? "font-medium" : "font-normal"}>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
-
-        <div className="px-4 py-3.5 border-t border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 text-[11px] font-semibold flex-shrink-0">
-            {getUserInitials()}
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-white/70 text-xs font-medium truncate">{userData?.name || userData?.email || "User"}</p>
-            <p className="text-white/25 text-[10px]">Pro Plan</p>
-          </div>
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* ── MAIN ────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
@@ -851,7 +797,7 @@ overview &&
                     <h3 className="text-[14px] font-medium text-slate-400 uppercase tracking-widest mb-2">
                       Budget Range
                     </h3>
-{overview?.budgetRange || ''}
+{overview.budgetCurrency} {overview?.budgetRange || 'Not Provided Yet'}
                   </div>
 
                   <div>

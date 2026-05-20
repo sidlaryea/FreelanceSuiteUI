@@ -18,6 +18,7 @@ import ExpensePage from './Expense';
 import RecurringInvoicePage from './RecurringInvoice';
 import TrackDelivery from './Trackdelivery';
 import SettingsPage from './SettingsPage';
+
 import TaxPage from './taxpage';
 import AuditPage from './AuditPage';
 import ReportPage from './ReportPage';
@@ -27,6 +28,16 @@ import ProjectOverviewPage from "./ProjectOverviewPage";
 import ProjectOverviewPreviewPage from "./ProjectOverviewPreviewPage";
 import ProposalDraftEditorPage from './ProposalDraftEditorPage';
 import ProposalDraftPage from './ProposalDraftPage';
+import ClientSignaturePage from './ClientSignaturePage';
+import InternalPreviewPage from './components/InternalPreviewPage';
+import FinalProposalPage from './FinalProposalPage';
+import ClientProposalPage from './ClientProposalPage';
+import ClientPaymentPage from './ClientPaymentPage';
+import ProposalSettingspage from './ProposalSettingspage';
+import ClientsPage from './ClientsPage';
+
+
+
 
 
 
@@ -46,7 +57,10 @@ function App() {
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/dashboard" element={<Dashboard />} />{/* DashboardPage*/}
           {/* Public Proposal */}
-        <Route path="/p/:token" element={<PublicProposalPage />} />
+        <Route path="/proposal/:token" element={<PublicProposalPage />} />
+        <Route path="/preview/:draftId" element={<InternalPreviewPage />} />
+        <Route path="/clientspage" element={<ClientsPage />} />
+        
 
 
 
@@ -69,17 +83,23 @@ function App() {
           <Route path="/recurringInvoice" element={<RecurringInvoicePage  />} /> {/* Redirect all other paths to Home */}
           <Route path="/trackDelivery" element={<TrackDelivery />} /> 
           <Route path="/Settings" element={<SettingsPage />} /> {/* Redirect all other paths to Home */}
+          <Route path="/ProposalSettings" element={<ProposalSettingspage />} />
           <Route path="/Taxpage" element={<TaxPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/AuditPage" element={<AuditPage />} /> {/* Redirect all other paths to Home */}
           <Route path="ReportPage" element={<ReportPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/OnboardPage" element={<OnboardPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/ProjectOverviewPage" element={<ProjectOverviewPage />} /> {/* Redirect all other paths to Home */}
-<Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
-<Route path="/ProposalDraftPage" element={<ProposalDraftPage />} />
-<Route path="/ProposalDraftEditorPage/:id" element={<ProposalDraftEditorPage />} />
+          <Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
+          <Route path="/ProposalDraftPage" element={<ProposalDraftPage />} />
+          <Route path="/ProposalDraftEditorPage/:id" element={<ProposalDraftEditorPage />} />
+          <Route path="/final-proposal/:id" element={<FinalProposalPage />} />
+          <Route path="/proposal/view/:publicId" element={<ClientSignaturePage />} />
+          <Route path="/client/proposal/:token" element={<ClientProposalPage />} />
+          <Route path="/client/payment/:token" element={<ClientPaymentPage />} />
           
 
           <Route path="*" element={<Home />} /> {/* Redirect all other paths to Home */}
+
 
         </Routes>
         

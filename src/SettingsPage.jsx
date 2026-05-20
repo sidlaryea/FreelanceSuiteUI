@@ -323,21 +323,21 @@ const uploadLogo = async (file) => {
       setCountries(sortedCountries);
     })
     .catch((err) => console.error("Failed to fetch countries:", err));
-}, []);
+    }, []);
 
- useEffect(() => {
+   useEffect(() => {
     axios.get("http://localhost:5214/api/Industries")
       .then((res) => {
         const sortedIndustries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setIndustries(sortedIndustries);
       })
       .catch((err) => console.error("Failed to fetch the industries:", err));
-  }, []);
+    }, []);
 
 
 
-  // Fetch user profile data//
-  useEffect(() => {
+    // Fetch user profile data//
+    useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
@@ -365,10 +365,10 @@ const uploadLogo = async (file) => {
     };
 
     fetchProfile();
-  }, []);
+    }, []);
 
-//fetch Business Info data
-  useEffect(() => {
+    //fetch Business Info data
+    useEffect(() => {
     const fetchBusinessInfo = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
@@ -404,10 +404,10 @@ const uploadLogo = async (file) => {
     };
 
     fetchBusinessInfo();
-  }, []);
+   }, []);
 
-//Fetch Branding Details data 
-  useEffect(() => {
+   //Fetch Branding Details data 
+    useEffect(() => {
     const fetchBrandingDetails = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
@@ -932,11 +932,11 @@ const [selectedInvoice, setSelectedInvoice] = useState(null);
                   />
                 </div>
                       <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Logo</label>
-                    <div className="bg-white border-2 border-gray-200 rounded-lg p-6 max-w-xs">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Business Logo</label>
+                        <div className="bg-white border-2 border-gray-200 rounded-lg p-6 max-w-xs">
 
-                      {/* Business Logo or Placeholder */}
-                      <img
+                        {/* Business Logo or Placeholder */}
+                        <img
                             src={
                                     logoPreview
                                       ? logoPreview // 👉 new preview (just selected)

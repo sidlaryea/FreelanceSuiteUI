@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function PricingTable({ initialItems = [], onChange }) {
+export default function PricingTable({ initialItems = [], onChange, budgetCurrency = "" }) {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -125,7 +125,8 @@ export default function PricingTable({ initialItems = [], onChange }) {
 
                   {/* ROW TOTAL */}
                   <td className="py-3 pr-2 font-medium text-slate-700">
-                    ${rowTotal.toFixed(2)}
+                    {budgetCurrency ? <span className="text-slate-500 text-xs mr-1">{budgetCurrency}</span> : null}
+            {rowTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
 
                   {/* REMOVE */}
@@ -156,7 +157,7 @@ export default function PricingTable({ initialItems = [], onChange }) {
         <div className="text-right">
           <p className="text-sm text-slate-400">Total</p>
           <p className="text-xl font-semibold text-slate-900">
-            ${total.toFixed(2)}
+            {budgetCurrency} {total.toLocaleString('en-US', {minimumFractionDigits: 2,maximumFractionDigits: 2})}
           </p>
         </div>
       </div>
