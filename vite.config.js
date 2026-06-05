@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/Profile-images': {
-        target: 'http://localhost:5214',
+        target: 'http://localhost5214:',
         changeOrigin: true,
         secure: false,
       },

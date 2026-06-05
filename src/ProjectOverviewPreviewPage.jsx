@@ -32,7 +32,7 @@ export default function ProjectOverviewPreviewPage() {
 
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [ setUserData] = useState(null);
   const [showCompleteDetailsModal, setShowCompleteDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [form, setForm] = useState({});
@@ -325,16 +325,16 @@ useEffect(() => {
     }
   };
 
-  const getUserInitials = () => {
-    if (userData?.name) {
-      const names = userData.name.split(' ');
-      return names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    }
-    if (userData?.email) {
-      return userData.email[0].toUpperCase();
-    }
-    return "U";
-  };
+  // const getUserInitials = () => {
+  //   if (userData?.name) {
+  //     const names = userData.name.split(' ');
+  //     return names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  //   }
+  //   if (userData?.email) {
+  //     return userData.email[0].toUpperCase();
+  //   }
+  //   return "U";
+  // };
 
   const fetchIndustries = async () => {
     const token = localStorage.getItem("jwtToken");
@@ -726,7 +726,7 @@ overview &&
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-white overflow-hidden font-outfit">
+      <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-slate-500">Loading...</div>
         </div>
@@ -735,14 +735,14 @@ overview &&
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden font-outfit">
+    <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
       {/* ── SIDEBAR ─────────────────────────────────────── */}
       <Sidebar />
 
       {/* ── MAIN ────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fc]">
         {/* TOPNAV */}
-        <header className="h-14 bg-white border-b border-slate-100 px-7 flex items-center justify-between flex-shrink-0">
+        <header className="h-20 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-7 flex items-center justify-between flex-shrink-0 shadow-sm">
           <div className="flex items-center gap-1 text-xs text-slate-400">
             <button onClick={() => navigate("/ProjectOverviewPage")} className="hover:text-slate-600 transition-colors flex items-center gap-1">
               <span>{Icon.arrowLeft}</span>
@@ -766,11 +766,22 @@ overview &&
         {/* SCROLLABLE CONTENT */}
         <main className="flex-1 overflow-y-auto px-7 py-6">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl border border-slate-100 p-6 space-y-6">
+            <div className="mb-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 p-8 text-white shadow-xl">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-slate-300 mb-2">Project Overview Preview</p>
+                  <h1 className="text-3xl font-semibold tracking-tight">{overview?.projectTitle || 'Loading...'}</h1>
+                  <p className="mt-3 max-w-2xl text-slate-200">Review the AI preview, edit content, and export your proposal with a consistent page experience.</p>
+                </div>
+                
+              </div>
+            </div>
+
+            <div className="bg-white/95 rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6">
               <div>
-                <h1 className="text-[19px] font-semibold text-slate-900 tracking-tight">
-{overview?.projectTitle || 'Loading...'}
-                </h1>
+                <h2 className="text-[19px] font-semibold text-slate-900 tracking-tight">
+                  {overview?.projectTitle || 'Loading...'}
+                </h2>
               </div>
 
               <div className="border-t border-slate-100 pt-6 space-y-6">
@@ -841,9 +852,9 @@ overview &&
             <div className="h-6"> </div>
 
             {overview?.aiProposalPreviewHtml && (
-              <div className={`p-4 rounded-lg mt-6 ${
+              <div className={`p-4 rounded-3xl mt-6 ${
   missingFields 
-    ? "bg-yellow-50 border border-yellow-200" 
+    ? "bg-yellow-50 border border-yellow-200"
     : "bg-green-50 border border-green-200"
 }`}>
                 {missingFields ? (
@@ -874,41 +885,46 @@ overview &&
                 
 
             {/* AI PROPOSAL PREVIEW */}
-             <div className="bg-white rounded-xl border border-slate-100 p-6 mt-6 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-                        <h2 className="text-[15px] font-semibold text-slate-900 mb-4 text-center">AI Generated Proposal Preview</h2>
-                              {previews.map((p, index) => (
-                                <button
-                                  key={p.id}
-                                  onClick={() => {
-                                    setSelectedPreviewId(p.id);
-                                    setEditedHtml(p.html);
-                                    editor?.commands.setContent(p.html);
-                                  }}
-                                  className={`px-3 py-1 rounded ${
-                                    selectedPreviewId === p.id
-                                      ? "bg-blue-600 text-white"
-                                      : "bg-gray-200"
-                                  }`}
-                                >
-                                  Version {index + 1}
-                                </button>
-                              ))}
-                 {isLoadingPreview ? (
-                                      <div className="flex flex-col items-center justify-center py-10"> 
-                                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-                                              <p className="text-sm text-slate-500">Generating AI proposal...</p>
-                                            </div>
-                                                  ): selectedPreview ? (
-
-                  <div   ref={previewRef}  
-                  className="prose prose-slate max-w-3xl mx-auto prose-h1:text-2xl prose-h1:font-bold prose-h2:text-lg prose-h2:font-semibold prose-h2:mt-6 prose-h2:mb-2 prose-h2:border-l-4 prose-h2:border-blue-500 prose-h2:pl-3
-                  prose-p:text-slate-700 prose-p:leading-relaxed prose-p:my-3 prose-strong:text-slate-900 [&_*]:break-words [&_*]:max-w-full"
-                  dangerouslySetInnerHTML={{ __html: cleanPreviewHtml( formatIfPlainText(selectedPreview.html)) }}/>
-                  ) : (<p className="text-slate-500 text-sm"> AI preview not generated yet.</p>)
-                  }
+            <div className="bg-white/95 rounded-3xl border border-slate-200 p-6 mt-6 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+                <h2 className="text-[15px] font-semibold text-slate-900">AI Generated Proposal Preview</h2>
+                <div className="flex flex-wrap gap-2">
+                  {previews.map((p, index) => (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setSelectedPreviewId(p.id);
+                        setEditedHtml(p.html);
+                        editor?.commands.setContent(p.html);
+                      }}
+                      className={`px-3 py-1 rounded-2xl text-sm font-medium ${
+                        selectedPreviewId === p.id
+                          ? "bg-blue-600 text-white"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      }`}
+                    >
+                      Version {index + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {isLoadingPreview ? (
+                <div className="flex flex-col items-center justify-center py-10">
+                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                  <p className="text-sm text-slate-500">Generating AI proposal...</p>
+                </div>
+              ) : selectedPreview ? (
+                <div
+                  ref={previewRef}
+                  className="prose prose-slate max-w-3xl mx-auto prose-h1:text-2xl prose-h1:font-bold prose-h2:text-lg prose-h2:font-semibold prose-h2:mt-6 prose-h2:mb-2 prose-h2:border-l-4 prose-h2:border-blue-500 prose-h2:pl-3 prose-p:text-slate-700 prose-p:leading-relaxed prose-p:my-3 prose-strong:text-slate-900 [&_*]:break-words [&_*]:max-w-full"
+                  dangerouslySetInnerHTML={{ __html: cleanPreviewHtml(formatIfPlainText(selectedPreview.html)) }}
+                />
+              ) : (
+                <p className="text-slate-500 text-sm">AI preview not generated yet.</p>
+              )}
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-100 p-4 mt-4 shadow-sm">
+            <div className="bg-white/95 rounded-3xl border border-slate-200 p-4 mt-4 shadow-sm">
               <label className="block text-2xl font-medium text-slate-700 mb-3">
                 Edit Proposal Content
               </label>
@@ -971,9 +987,9 @@ overview &&
 
 
 {showCompleteDetailsModal && (
-<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
 
-<div className="bg-white rounded-xl w-[700px] max-h-[90vh] overflow-y-auto p-6">
+<div className="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
 
 <h2 className="text-lg font-semibold mb-6">
 Complete Project Details
@@ -1071,9 +1087,9 @@ className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-
 )}
 
 {showEditModal && (
-<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
 
-<div className="bg-white rounded-xl w-[800px] max-h-[90vh] overflow-y-auto p-6">
+<div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
 
 <h2 className="text-lg font-semibold mb-6">
 Edit Project

@@ -173,6 +173,10 @@ export default function PublicProposalPage() {
             <HTML html={proposal.scopeOfWork} />
           </Section>
 
+          <Section title="Key Deliverables">
+            <HTML html={proposal.deliverables} />
+          </Section>
+
           <Section title="Timeline">
             <HTML html={proposal.timeline} />
           </Section>

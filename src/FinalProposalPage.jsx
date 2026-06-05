@@ -477,11 +477,21 @@ try {
                     </div>
                   )}
 
+                  
+
                   {/* Scope */}
                   {proposal.scopeOfWork && (
                     <div>
                       <h2 className="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-3">Scope of Work</h2>
                       <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: proposal.scopeOfWork }} />
+                    </div>
+                  )}
+
+                  {/*Key Deliverables*/}
+                   {proposal.deliverables && (
+                    <div>
+                      <h2 className="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-3">Key Deliverables</h2>
+                      <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: proposal.deliverables }} />
                     </div>
                   )}
 

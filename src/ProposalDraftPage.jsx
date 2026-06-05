@@ -260,11 +260,11 @@ console.error("Failed to load proposal drafts", error);
   }
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} userData={userData} />
 
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-        <header className="h-14 bg-white border-b border-slate-100 px-7 flex items-center justify-between flex-shrink-0">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fc]">
+        <header className="h-20 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-7 flex items-center justify-between flex-shrink-0 shadow-sm">
           <div className="flex items-center gap-1 text-xs text-slate-400">
             <span>Dashboard</span>
             <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-slate-300"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -288,40 +288,42 @@ console.error("Failed to load proposal drafts", error);
         </header>
 
         <main className="flex-1 overflow-y-auto px-7 py-6 space-y-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-[19px] font-semibold text-slate-900 tracking-tight">Proposals </h1>
-              <p className="text-sm text-slate-400 mt-0.5">Track your deals and conversions</p>
+          <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 p-8 text-white shadow-xl">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight">Proposal Drafts</h1>
+                <p className="text-sm text-slate-200 mt-2">Track your deals and conversions with AI-ready drafts.</p>
+              </div>
+              <button
+                onClick={() => navigate('/ProjectOverviewPage')}
+                className="h-12 px-5 rounded-2xl bg-white text-slate-900 font-semibold hover:bg-slate-100 transition flex items-center gap-2"
+              >
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
+                Generate New
+              </button>
             </div>
-            <button
-              onClick={() => navigate('/ProjectOverviewPage')}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm cursor-pointer transition-colors flex items-center gap-1"
-            >
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/></svg>
-              Generate New
-            </button>
-          </div>
-          <div className="flex gap-2 mt-4">
-                  {["All", "Draft", "Sent", "Won", "Lost"].map(tab => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2 rounded-lg text-sm ${
-                        activeTab === tab
-                          ? "bg-slate-900 text-white"
-                          : "bg-white border border-slate-200 text-slate-600"
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
+          </section>
 
+          <div className="flex gap-2 mt-4">
+            {["All", "Draft", "Sent", "Won", "Lost"].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-lg text-sm ${
+                  activeTab === tab
+                    ? "bg-slate-900 text-white"
+                    : "bg-white border border-slate-200 text-slate-600"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
 
 
           {currentItems.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-100 p-12 text-center">
-              <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-12 text-center">
+              <div className="w-16 h-16 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" className="text-slate-400 w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
@@ -337,59 +339,61 @@ console.error("Failed to load proposal drafts", error);
               </button>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-100">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-slate-100">
                   <tr className="text-left text-sm text-gray-600">
-                    <th className="p-4 text-[14px] text-slate-400"></th>
+                    <th className="p-4 text-[14px] text-slate-400">Logo</th>
                     <th className="p-4 text-[14px] text-slate-400">Project</th>
                     <th className="p-4 text-[14px] text-slate-400">Client</th>
                     <th className="p-4 text-[14px] text-slate-400">Status</th>
                     <th className="p-4 text-[14px] text-slate-400">Client Estimate</th>
                     <th className="p-4 text-[14px] text-slate-400">Last Activity</th>
                     <th className="p-4 text-[14px] text-slate-400">Actions</th>
-                    </tr>
+                  </tr>
                 </thead>
                 <tbody>
                   {currentItems.map((item) => {
-  const stageDisplay = mapFunnelToStatus(item.funnelStageDescription);
+                    const stageDisplay = mapFunnelToStatus(item.funnelStageDescription);
 
-  return (
-    
-    <tr key={item.id} className="border-b hover:bg-slate-50">
-      <img src={`http://localhost:5078${item.client?.logo}`}
-      className="w-12 h-12 object-contain"
-      /> 
-      <td className="p-4 text-sm font-medium text-slate-800">
-        {item.title || "Untitled"}
-      </td>
-
-      <td className="p-4 text-sm text-slate-600">
-        {item.client?.name || "No client"}
-      </td>
-
-      <td className="p-4">
-        <span className={`px-3 py-1 rounded-full text-xs ${stageDisplay.color}`}>
-          {stageDisplay.label}
-        </span>
-      </td>
-
-      <td className="p-4 text-sm font-semibold text-slate-900">
-        {item.costEstimatePreview|| "No client"}
-      </td>
-
-      <td className="p-4 text-sm text-slate-600">
-        {formatDate(item.updatedAt)}
-      </td>
-
-      <td className="p-4">
-        <div className="flex gap-3">
-          {getActions(item)}
-        </div>
-      </td>
-    </tr>
-  );
-})}
+                    return (
+                      <tr key={item.id} className="border-b hover:bg-slate-50">
+                        <td className="p-4">
+                          {item.client?.logo ? (
+                            <img
+                              src={`http://localhost:5078${item.client.logo}`}
+                              className="w-12 h-12 object-contain rounded-2xl bg-slate-100"
+                              alt={item.client?.name || "Client logo"}
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-2xl bg-slate-100" />
+                          )}
+                        </td>
+                        <td className="p-4 text-sm font-medium text-slate-800">
+                          {item.title || "Untitled"}
+                        </td>
+                        <td className="p-4 text-sm text-slate-600">
+                          {item.client?.name || "No client"}
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-3 py-1 rounded-full text-xs ${stageDisplay.color}`}>
+                            {stageDisplay.label}
+                          </span>
+                        </td>
+                        <td className="p-4 text-sm font-semibold text-slate-900">
+                          {item.budgetCurrency} {item.costEstimatePreview || "No estimate"}
+                        </td>
+                        <td className="p-4 text-sm text-slate-600">
+                          {formatDate(item.updatedAt)}
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-3">
+                            {getActions(item)}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
 

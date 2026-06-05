@@ -1,6 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Sidebar from "./components/Sidebar";
+import { getCrmClients, getClientRecommendations } from "./services/clientService";
+import AddClientModal from "./components/AddClientModal";
+import ImportClientsModal from "./components/ImportClientsModal";
+
+
+
 import {
+
   Search,
   Plus,
   Filter,
@@ -21,70 +28,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-const mockClients = [
-  {
-    id: "c1",
-    clientName: "Aurum Logistics",
-    companyName: "Aurum Logistics Ltd",
-    email: "accounts@aurumlogistics.com",
-    phone: "+233 24 000 1111",
-    relationshipStatus: "Enterprise",
-    active: true,
-    logoText: "AL",
-    lastActivity: "Proposal viewed 2 hours ago",
-    nextFollowUp: "Tomorrow • 10:00 AM",
-    assignedTo: "Sidney",
-    metrics: {
-      totalProposals: 18,
-      accepted: 7,
-      revenue: 42000,
-      outstandingAmount: 4000,
-    },
-    aiInsights: {
-      clientHealth: 82,
-      recommendation:
-        "High engagement detected. Best time to send revised pricing is within 24 hours.",
-      tags: ["Returning", "High Value", "Priority"],
-    },
-    timeline: [
-      "Proposal opened • 2h ago",
-      "Invoice paid • Yesterday",
-      "Consultation completed • 4 days ago",
-      "New proposal generated • 1 week ago",
-    ],
-  },
-  {
-    id: "c2",
-    clientName: "Cedar Fintech",
-    companyName: "Cedar Fintech Inc",
-    email: "hello@cedarfintech.com",
-    phone: "+233 20 900 2222",
-    relationshipStatus: "Startup",
-    active: true,
-    logoText: "CF",
-    lastActivity: "Invoice sent 1 day ago",
-    nextFollowUp: "Friday • 2:30 PM",
-    assignedTo: "Sidney",
-    metrics: {
-      totalProposals: 9,
-      accepted: 2,
-      revenue: 12000,
-      outstandingAmount: 4000,
-    },
-    aiInsights: {
-      clientHealth: 68,
-      recommendation:
-        "Client engagement has dropped slightly. Suggested follow-up email recommended.",
-      tags: ["Startup", "Automation"],
-    },
-    timeline: [
-      "Invoice sent • 1d ago",
-      "Proposal viewed • 3 days ago",
-      "Client meeting • 5 days ago",
-      "Lead converted • 2 weeks ago",
-    ],
-  },
-];
+
 
 function formatCurrency(n) {
   try {
@@ -100,34 +44,176 @@ function formatCurrency(n) {
 
 export default function ClientsPage() {
   const [query, setQuery] = useState("");
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [showImportClients, setShowImportClients] = useState(false);
+
   const [activeTab, setActiveTab] = useState("All Clients");
-  const [selectedClientId, setSelectedClientId] = useState("c1");
+  const [selectedClientId, setSelectedClientId] = useState("");
+  const [clients,setClients] = useState([]);
+  const [loading,setLoading] = useState(true);
+  const [activities,setActivities] = useState([]);
+  const [recommendation,setRecommendations] = useState([]);
+  
 
-  const selectedClient = useMemo(
-    () => mockClients.find((c) => c.id === selectedClientId),
-    [selectedClientId]
-  );
 
-  const filtered = useMemo(() => {
-    const q = query.toLowerCase();
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
-    return mockClients.filter((c) => {
-      const matches =
-        c.clientName.toLowerCase().includes(q) ||
-        c.companyName.toLowerCase().includes(q);
+  const loadRecommendations = useCallback(async () => {
+  try {
+    const data = await getClientRecommendations(selectedClientId);
+    setRecommendations(data);
+    {console.log("Loaded recommendations:", data);}
+  } catch (error) {
+    console.error(error);
+  }
+}, [selectedClientId]);
 
-      if (activeTab === "High Value") {
-        return matches && c.metrics.revenue >= 20000;
-      }
 
-      return matches;
-    });
-  }, [query, activeTab]);
+  const fetchClients = async () => {
+    try {
+      setLoading(true);
 
-  const totalRevenue = mockClients.reduce(
-    (acc, c) => acc + c.metrics.revenue,
-    0
-  );
+      const data = await getCrmClients();
+      
+      // Normalize API response to ensure all required properties exist
+      const normalizedClients = data.map(client => ({
+        ...client,
+        name: client.name || client.clientName || "Unknown",
+        email: client.email || "",
+        phone: client.phone || "",
+        companyName: client.companyName || "",
+        logo: client.logo || "",
+        logoText: client.logoText || client.name?.charAt(0) || client.clientName?.charAt(0) || "?",
+        status: client.status || "Active",
+        healthScore: client.healthScore || 0,
+        riskScore: client.riskScore || 0,
+        proposalCount: client.proposalCount || 0,
+        acceptedProposalCount: client.acceptedProposalCount || 0,
+        lifetimeValue: client.lifetimeValue || 0,
+        outstandingAmount: client.outstandingAmount || 0,
+        lastActivityAt: client.lastActivityAt || null,
+        nextFollowUp: client.nextFollowUp || "No scheduled follow-up",
+        assignedTo: client.assignedTo || "Unassigned",
+        aiInsights: client.aiInsights || { tags: [] },
+      }));
+      
+      setClients(normalizedClients);
+
+    } catch (err) {
+      console.error("Failed to load clients", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+  if (!selectedClientId) return;
+
+  loadRecommendations();
+}, [selectedClientId, loadRecommendations]);
+
+
+
+
+  
+
+const token = localStorage.getItem("token");
+const apiKey = localStorage.getItem("apiKey");
+
+const getClientActivities = useCallback(async (clientId) => {
+  const response = await fetch(
+    `http://localhost:5214/Proposal/api/Client/api/internal/client-activities/${clientId}`,
+  
+  
+  {
+  headers: {
+            Authorization: `Bearer ${token}`,
+            "X-API-KEY": apiKey
+          }
+        }
+      
+      );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  return await response.json();
+}, [token, apiKey]);
+
+
+
+
+const loadActivities = useCallback(async () => {
+  try {
+    const data = await getClientActivities(selectedClientId);
+    setActivities(data);
+  } catch (err) {
+    console.error(err);
+  }
+}, [selectedClientId, getClientActivities]);
+
+
+useEffect(() => {
+  if (!selectedClientId) return;
+
+  loadActivities();
+}, [selectedClientId, loadActivities]);
+
+  const selectedClient = clients.find((c) => c.id === selectedClientId);
+  const topRecommendation = Array.isArray(recommendation)
+    ? recommendation[0]
+    : null;
+
+
+  if (loading) return <div>Loading clients...</div>; 
+
+  const totalClients = clients.length;
+
+const totalRevenue = clients.reduce(
+  (sum, c) => sum + (c.lifetimeValue || 0),
+  0
+);
+
+const totalOutstanding = clients.reduce(
+  (sum, c) => sum + (c.outstandingAmount || 0),
+  0
+);
+
+const totalProposals = clients.reduce(
+  (sum, c) => sum + (c.proposalCount || 0),
+  0
+);
+
+const totalAccepted = clients.reduce(
+  (sum, c) => sum + (c.acceptedProposalCount || 0),
+  0
+);
+
+const winRate =
+  totalProposals > 0
+    ? ((totalAccepted / totalProposals) * 100).toFixed(0)
+    : 0;
+
+
+    const filteredClients = clients.filter((client) =>
+  (
+    client.name +
+    " " +
+    client.companyName +
+    " " +
+    client.email
+  )
+    .toLowerCase()
+    .includes(query.toLowerCase())
+);
+
+
+
+
+
 
   return (
     <div
@@ -155,12 +241,18 @@ export default function ClientsPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="h-11 px-4 rounded-2xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
+            <button
+              className="cursor-pointer h-11 px-4 rounded-2xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition flex items-center gap-2"
+              onClick={() => setShowImportClients(true)}
+            >
               <Upload size={16} />
               Import
             </button>
 
-            <button className="h-11 px-4 rounded-2xl bg-slate-900 text-white hover:bg-black transition flex items-center gap-2 shadow-lg shadow-slate-200">
+            <button
+              onClick={() => setShowAddClient(true)}
+              className="cursor-pointer h-11 px-4 rounded-2xl bg-slate-900 text-white hover:bg-black transition flex items-center gap-2 shadow-lg shadow-slate-200"
+            >
               <Plus size={16} />
               Add Client
             </button>
@@ -168,29 +260,39 @@ export default function ClientsPage() {
         </header>
 
         <main className="flex-1 overflow-y-auto">
+          <AddClientModal
+            isOpen={showAddClient}
+            onClose={() => setShowAddClient(false)}
+            onClientAdded={() => fetchClients()}
+          />
+          <ImportClientsModal
+            isOpen={showImportClients}
+            onClose={() => setShowImportClients(false)}
+            onImport={() => fetchClients()}
+          />
           <div className="p-8">
             {/* KPI SECTION */}
             <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
               {[
                 {
                   label: "Total Clients",
-                  value: "128",
-                  growth: "+12%",
+                  value: totalClients,
+                  
                 },
                 {
                   label: "Proposal Win Rate",
-                  value: "63%",
-                  growth: "+8%",
+                  value: `${winRate}%`
+                  
                 },
                 {
                   label: "Revenue Generated",
                   value: formatCurrency(totalRevenue),
-                  growth: "+21%",
+                  
                 },
                 {
                   label: "Outstanding Invoices",
-                  value: "$14,000",
-                  growth: "-2%",
+                  value: formatCurrency(totalOutstanding),
+                  
                 },
               ].map((card) => (
                 <div
@@ -287,20 +389,31 @@ export default function ClientsPage() {
                       AI Recommendation
                     </div>
 
-                    <h2 className="text-2xl font-bold max-w-2xl">
-                      Aurum Logistics is highly engaged and likely ready for a
-                      revised proposal this week.
-                    </h2>
+                   <h2 className="text-2xl font-bold max-w-2xl">
+                          {topRecommendation
+                            ? topRecommendation.title
+                            : "No AI recommendations available"}
+                        </h2>
 
-                    <p className="text-slate-300 mt-3 max-w-2xl">
-                      Based on recent proposal views, payment behavior and
-                      engagement activity.
-                    </p>
-                  </div>
+                        <p className="text-slate-300 mt-3 max-w-2xl">
+                          {topRecommendation?.message}
+                        </p>
+                                          </div>
+                                          {topRecommendation && (
+                                  <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10">
+                                    <Sparkles size={16} />
 
-                  <button className="h-12 px-5 rounded-2xl bg-white text-slate-900 font-medium hover:bg-slate-100">
+                                    <span>
+                                      Confidence:
+                                      {" "}
+                                      {topRecommendation.confidenceScore}%
+                                    </span>
+                                  </div>
+                                )}
+
+                  {/* <button className="h-12 px-5 rounded-2xl bg-white text-slate-900 font-medium hover:bg-slate-100">
                     Generate Proposal
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </section>
@@ -309,7 +422,7 @@ export default function ClientsPage() {
             <section className="grid grid-cols-1 xl:grid-cols-3 gap-7">
               {/* CLIENT LIST */}
               <div className="xl:col-span-2 space-y-5">
-                {filtered.map((client) => (
+                {filteredClients.map((client) => (
                   <div
                     key={client.id}
                     onClick={() => setSelectedClientId(client.id)}
@@ -321,22 +434,32 @@ export default function ClientsPage() {
                   >
                     <div className="flex items-start justify-between gap-5">
                       <div className="flex gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-white flex items-center justify-center font-bold text-lg">
-                          {client.logoText}
-                        </div>
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100">
+                              {client.logo ? (
+                                <img
+                                  src={`http://localhost:5078/${client.logo}`}
+                                  alt={client.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center font-bold">
+                                  {client.name?.charAt(0)}
+                                </div>
+                              )}
+                            </div>
 
                         <div>
                           <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="text-lg font-semibold text-slate-900">
-                              {client.clientName}
+                              {client.name}
                             </h3>
 
                             <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
-                              {client.relationshipStatus}
+                              {client.status}
                             </span>
 
                             <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">
-                              {client.aiInsights.clientHealth}% Health
+                              {client.healthScore}% Health
                             </span>
                           </div>
 
@@ -362,7 +485,7 @@ export default function ClientsPage() {
                           Proposals
                         </p>
                         <h4 className="text-xl font-bold mt-2">
-                          {client.metrics.totalProposals}
+                          {client.proposalCount}
                         </h4>
                       </div>
 
@@ -371,7 +494,7 @@ export default function ClientsPage() {
                           Accepted
                         </p>
                         <h4 className="text-xl font-bold mt-2">
-                          {client.metrics.accepted}
+                          {client.acceptedProposalCount}
                         </h4>
                       </div>
 
@@ -380,7 +503,7 @@ export default function ClientsPage() {
                           Revenue
                         </p>
                         <h4 className="text-xl font-bold mt-2">
-                          {formatCurrency(client.metrics.revenue)}
+                          {formatCurrency(client.lifetimeValue)}
                         </h4>
                       </div>
 
@@ -390,7 +513,7 @@ export default function ClientsPage() {
                         </p>
                         <h4 className="text-xl font-bold mt-2">
                           {formatCurrency(
-                            client.metrics.outstandingAmount
+                            client.outstandingAmount
                           )}
                         </h4>
                       </div>
@@ -409,7 +532,7 @@ export default function ClientsPage() {
                             className="text-emerald-500"
                           />
                           <span className="font-medium text-slate-800">
-                            {client.lastActivity}
+                            {client.lastActivityAt? new Date(client.lastActivityAt).toLocaleString(): "No activity"}
                           </span>
                         </div>
                       </div>
@@ -447,12 +570,12 @@ export default function ClientsPage() {
                     <div className="bg-white rounded-3xl border border-slate-200 p-6">
                       <div className="flex items-start gap-4">
                         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-white flex items-center justify-center font-bold">
-                          {selectedClient.logoText}
+                          {selectedClient.logoText || selectedClient.name?.charAt(0) || "?"}
                         </div>
 
                         <div>
                           <h3 className="text-xl font-bold text-slate-900">
-                            {selectedClient.clientName}
+                            {selectedClient.name || selectedClient.clientName}
                           </h3>
 
                           <p className="text-slate-500">
@@ -480,7 +603,7 @@ export default function ClientsPage() {
                             </p>
 
                             <h2 className="text-4xl font-bold mt-2">
-                              {selectedClient.aiInsights.clientHealth}%
+                              {selectedClient.healthScore}%
                             </h2>
                           </div>
 
@@ -490,7 +613,7 @@ export default function ClientsPage() {
                         </div>
 
                         <p className="text-slate-300 text-sm mt-5 leading-relaxed">
-                          {selectedClient.aiInsights.recommendation}
+                          Health Score: {selectedClient.healthScore}% • Risk Score: {selectedClient.riskScore}%
                         </p>
                       </div>
 
@@ -507,30 +630,106 @@ export default function ClientsPage() {
                       </div>
                     </div>
 
-                    {/* TIMELINE */}
-                    <div className="bg-white rounded-3xl border border-slate-200 p-6">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-slate-900">
-                          Relationship Timeline
-                        </h3>
+                   {/* TIMELINE */}
+                      <div className="bg-white rounded-3xl border border-slate-200 p-6">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-slate-900">
+                            Relationship Timeline
+                          </h3>
 
-                        <BellDot size={18} className="text-slate-400" />
+                          <BellDot size={18} className="text-slate-400" />
+                        </div>
+
+                        <div className="mt-6 space-y-5">
+                          {activities.length > 0 ? (
+                            activities.map((activity) => (
+                              <div key={activity.id} className="flex gap-4">
+                                <div className="w-3 h-3 rounded-full bg-blue-500 mt-2"></div>
+
+                                <div>
+                                  <p className="font-medium text-slate-900">
+                                    {activity.title}
+                                  </p>
+
+                                  <p className="text-sm text-slate-500">
+                                    {activity.description}
+                                  </p>
+
+                                  <p className="text-xs text-slate-400 mt-1">
+                                    {new Date(activity.createdAt).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-slate-500">
+                              No activities found.
+                            </p>
+                          )}
+                        </div>
                       </div>
+{/*STATISTICS CARD*/}
+<div className="bg-white rounded-3xl border border-slate-200 p-6">
+  <h3 className="font-semibold text-slate-900 mb-5">
+    Client Statistics
+  </h3>
 
-                      <div className="mt-6 space-y-5">
-                        {selectedClient.timeline.map((item, idx) => (
-                          <div key={idx} className="flex gap-4">
-                            <div className="w-3 h-3 rounded-full bg-blue-500 mt-2"></div>
+  <div className="space-y-4">
+    <div>
+      <p className="text-sm text-slate-500">
+        Last Activity
+      </p>
 
-                            <div>
-                              <p className="text-sm text-slate-800 font-medium">
-                                {item}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+      <p className="font-medium text-slate-900">
+        {selectedClient.lastActivityAt
+          ? new Date(
+              selectedClient.lastActivityAt
+            ).toLocaleString()
+          : "No activity"}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-slate-500">
+        Proposals
+      </p>
+
+      <p className="font-medium text-slate-900">
+        {selectedClient.proposalCount}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-slate-500">
+        Accepted Proposals
+      </p>
+
+      <p className="font-medium text-slate-900">
+        {selectedClient.acceptedProposalCount}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-slate-500">
+        Lifetime Value
+      </p>
+
+      <p className="font-medium text-slate-900">
+        {formatCurrency(selectedClient.lifetimeValue)}
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-slate-500">
+        Outstanding Revenue
+      </p>
+
+      <p className="font-medium text-slate-900">
+        {formatCurrency(selectedClient.outstandingAmount)}
+      </p>
+    </div>
+  </div>
+</div>
 
                     {/* FOLLOW UP */}
                     <div className="bg-white rounded-3xl border border-slate-200 p-6">

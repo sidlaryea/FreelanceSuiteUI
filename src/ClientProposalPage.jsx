@@ -72,7 +72,7 @@ export default function ClientProposalPage() {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-sm text-slate-500">Total Value</p>
-                <p className="text-xl font-semibold">${total.toLocaleString()}</p>
+                <p className="text-xl font-semibold">{proposal.currency} {total.toLocaleString()}</p>
               </div>
 
               <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
@@ -106,6 +106,11 @@ export default function ClientProposalPage() {
               <HTML html={proposal.scopeOfWork} />
             </SectionCard>
 
+            <SectionCard title="Key Deliverables">
+              <HTML html={proposal.deliverables} />
+            </SectionCard>
+
+
             <SectionCard title="Timeline">
               <HTML html={proposal.timeline} />
             </SectionCard>
@@ -132,10 +137,10 @@ export default function ClientProposalPage() {
                       <td className="p-3">{item.description}</td>
                       <td className="p-3 text-right">{item.qty}</td>
                       <td className="p-3 text-right">
-                        ${item.price.toLocaleString()}
+                        {proposal.currency}{item.price.toLocaleString()}
                       </td>
                       <td className="p-3 text-right font-medium">
-                        ${(item.qty * item.price).toLocaleString()}
+                        {proposal.currency}{(item.qty * item.price).toLocaleString()}
                       </td>
                     </tr>
                   ))}
@@ -146,7 +151,7 @@ export default function ClientProposalPage() {
                 <div className="bg-slate-100 px-5 py-3 rounded-lg text-right">
                   <p className="text-sm text-slate-500">Total</p>
                   <p className="text-xl font-bold">
-                    ${total.toLocaleString()}
+                    {proposal.currency} {total.toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -171,30 +176,119 @@ export default function ClientProposalPage() {
 
               {/* STATUS CARD */}
               <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                <h3 className="font-semibold text-slate-800">
-                  Project Status
-                </h3>
+      <h3 className="font-semibold text-slate-800">
+        Project Status
+      </h3>
 
-<p className="mt-2 text-sm text-emerald-600 font-medium flex items-center gap-2">
-                  <img
-                    src={`${import.meta.env.BASE_URL}logos/accepted.png`}
-                    alt="Accepted"
-                    className="h-5 w-5"
-                  />
-                  Proposal Accepted
-                </p>
+      {/* =========================
+          UNPAID STATUS
+      ========================== */}
+      {proposal?.invoiceStatus === "Draft" && (
+        <>
+          <p className="mt-2 text-sm text-amber-600 font-medium flex items-center gap-2">
+            <img
+              src={`${import.meta.env.BASE_URL}logos/accepted.png`}
+              alt="Pending Payment"
+              className="h-5 w-5"
+            />
+            Awaiting Payment
+          </p>
 
-                <p className="text-sm text-slate-500 mt-2">
-                  You're ready to begin. Complete payment to start the project.
-                </p>
+          <p className="text-sm text-slate-500 mt-2">
+            Your proposal has been accepted. Complete payment to begin the
+            project.
+          </p>
 
-                <button
-                  onClick={() => navigate(`/client/payment/${token}`)}
-                  className="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 transition text-white py-2.5 rounded-lg font-medium cursor-pointer "
-                >
-                  Proceed to Payment
-                </button>
-              </div>
+          <button
+            onClick={() => navigate(`/client/payment/${token}`)}
+            className="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 transition text-white py-2.5 rounded-lg font-medium cursor-pointer"
+          >
+            Proceed to Payment
+          </button>
+        </>
+      )}
+
+      {/* =========================
+          PARTIALLY PAID STATUS
+      ========================== */}
+      {proposal?.invoiceStatus === "PartiallyPaid" && (
+        <>
+          <p className="mt-2 text-sm text-blue-600 font-medium flex items-center gap-2">
+            <img
+              src={`${import.meta.env.BASE_URL}logos/partial-payment.png`}
+              alt="Partial Payment"
+              className="h-5 w-5"
+            />
+            Partial Payment Received
+          </p>
+
+          <p className="text-sm text-slate-500 mt-2">
+            We’ve received part of your payment. Complete the remaining balance
+            to continue the project workflow.
+          </p>
+
+          <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">Amount Paid</span>
+              <span className="font-semibold text-slate-700">
+                {proposal.currency} {proposal?.amountPaid?.toLocaleString?.() ?? proposal?.amountPaid ?? 0}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between text-sm mt-2">
+              <span className="text-slate-500">Balance Due</span>
+              <span className="font-semibold text-rose-600">
+                {proposal.currency} {proposal?.balanceDue?.toLocaleString?.() ?? proposal?.balanceDue ?? 0}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate(`/client/payment/${token}`)}
+            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2.5 rounded-lg font-medium cursor-pointer"
+          >
+            Complete Payment
+          </button>
+        </>
+      )}
+
+      {/* =========================
+          FULLY PAID STATUS
+      ========================== */}
+      {proposal?.invoiceStatus === "Paid" && (
+        <>
+          <p className="mt-2 text-sm text-emerald-600 font-medium flex items-center gap-2">
+            <img
+              src={`${import.meta.env.BASE_URL}logos/accepted.png`}
+              alt="Paid"
+              className="h-5 w-5"
+            />
+            Payment Completed
+          </p>
+
+          <p className="text-sm text-slate-500 mt-2">
+            Your payment has been successfully received. The project is now
+            active and work can begin.
+          </p>
+
+          <div className="mt-3 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-600">Total Paid</span>
+              <span className="font-semibold text-emerald-700">
+                {proposal.currency} {proposal?.amountPaid?.toLocaleString?.() ?? proposal?.amountPaid ?? 0}
+              </span>
+            </div>
+          </div>
+
+          <button
+            disabled
+            className="mt-4 w-full bg-emerald-100 text-emerald-700 py-2.5 rounded-lg font-medium cursor-not-allowed"
+          >
+            Payment Completed
+          </button>
+        </>
+      )}
+    </div>
 
               {/* SUPPORT CARD */}
               <div className="bg-slate-900 text-white rounded-2xl p-5">

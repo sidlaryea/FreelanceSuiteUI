@@ -5,7 +5,7 @@ export default function ClientTopbar({ proposal }) {
   const [open, setOpen] = useState(false);
 
   const clientName = proposal?.clientName || "Client";
-  const company = proposal?.clientCompany || "Your Company";
+  const company = proposal?.client.companyName || "Your Company";
 
   const notifications = [
     {

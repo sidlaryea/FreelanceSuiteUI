@@ -865,6 +865,10 @@ const validateBeforeFinish = () => {
                           <option value="NGN">NGN — Nigerian Naira</option>
                           <option value="USD">USD — US Dollar</option>
                           <option value="KES">KES — Kenyan Shilling</option>
+                          <option value="ZAR">ZAR — South African Rand</option>
+                          <option value="XOF">XOF — West African CFA franc</option>
+                          <option value="EGP">EGP — Egyptian Pounds</option>
+                          <option value="RWF">RWF — Rwandan Francs</option>
                         </select>
                       </F>
                     </div>

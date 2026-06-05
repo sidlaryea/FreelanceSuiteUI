@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import Sidebar from "./components/Sidebar";
+import CreateProjectModal from "./components/CreateProjectModal";
 
 
 export default function ProjectOverviewsPage() {
@@ -243,14 +244,15 @@ const createProjectOverview = async (formData) => {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
       <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} userData={userData} />
 
 
       {/* ── MAIN ────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#f6f8fc]">
         {/* TOPNAV */}
-        <header className="h-14 bg-white border-b border-slate-100 px-7 flex items-center justify-between flex-shrink-0">
+        <header className="h-20 bg-white/90 backdrop-blur-xl border-b border-slate-200 px-7 flex items-center justify-between flex-shrink-0 shadow-sm">
+
           <div className="flex items-center gap-1 text-xs text-slate-400">
             <span>Dashboard</span>
           <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="text-slate-300"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -258,7 +260,7 @@ const createProjectOverview = async (formData) => {
             <span className="text-slate-700 font-medium">AI Previews</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 w-52 focus-within:border-slate-400 transition-colors">
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 w-52 focus-within:border-slate-400 transition-colors shadow-sm">
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
 
               <input className="bg-transparent outline-none text-sm text-slate-700 flex-1 placeholder:text-slate-400" placeholder="Search…"/>
@@ -273,21 +275,22 @@ const createProjectOverview = async (formData) => {
 
         {/* SCROLLABLE CONTENT */}
         <main className="flex-1 overflow-y-auto px-7 py-6 space-y-5">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-[19px] font-semibold text-slate-900 tracking-tight">AI Generated Project Overviews</h1>
-              <p className="text-sm text-slate-400 mt-0.5">Manage your AI-generated project previews</p>
+          <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 p-8 text-white shadow-xl">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight">AI Generated Project Overviews</h1>
+                <p className="text-sm text-slate-200 mt-2">Manage your AI-generated project previews with intelligent summaries and easy actions.</p>
+              </div>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className=" cursor-pointer h-12 px-5 rounded-2xl bg-white text-slate-900 font-semibold hover:bg-slate-100 transition flex items-center gap-2"
+              >
+                + Create New Project
+              </button>
             </div>
-            <button
-onClick={() => setShowCreateModal(true)}
-className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm cursor-pointer transition-colors flex items-center gap-1"
->
-+ Create New Project
-</button>
+          </section>
 
-          </div>
-
-          <div className="bg-white rounded-xl border border-slate-100">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-slate-100">
                 <tr className="text-left text-sm text-gray-600">
@@ -383,288 +386,21 @@ className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm
               </div>
             )}
 
-{showCreateModal && (
-
-<div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-
-<div className="bg-white rounded-xl w-[800px] max-h-[90vh] overflow-y-auto p-6">
-
-<h2 className="text-lg font-semibold mb-6">
-Create New Project
-</h2>
-
-{error && (
-  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-    {error}
-  </div>
-)}
-
-<form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-{/* Project Title */}
-
-<div className="md:col-span-2">
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Project Title
-</label>
-
-<input
-type="text"
-name="projectTitle"
-value={form.projectTitle || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
+<CreateProjectModal
+  isOpen={showCreateModal}
+  onClose={() => setShowCreateModal(false)}
+  onSubmit={handleSubmit}
+  form={form}
+  onChange={handleChange}
+  clients={clients}
+  industries={industries}
+  currencies={currencies}
+  budgetCurrency={budgetCurrency}
+  budgetAmount={budgetAmount}
+  onBudgetCurrencyChange={handleBudgetCurrencyChange}
+  onBudgetAmountChange={handleBudgetAmountChange}
+  error={error}
 />
-</div>
-
-{/* Project Type */}
-
-<div>
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Project Type
-</label>
-
-<select
-name="projectType"
-value={form.projectType || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
->
-<option value="">Select Project Type</option>
-<option value="web_app">Web Application</option>
-<option value="mobile_app">Mobile App</option>
-<option value="website">Website</option>
-<option value="ecommerce">E-commerce</option>
-<option value="saas">SaaS Platform</option>
-<option value="api">API/Backend</option>
-<option value="automation">Automation</option>
-<option value="other">Other</option>
-</select>
-</div>
-
-{/* Client */}
-
-<div>
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Client
-</label>
-
-<select
-name="clientId"
-value={form.clientId || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
->
-<option value="">Select Client</option>
-{clients.map((client) => (
-<option key={client.id} value={client.id}>
-{client.name}
-</option>
-))}
-</select>
-</div>
-
-{/* Project Description */}
-
-<div className="md:col-span-2">
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Project Description
-</label>
-
-<textarea
-name="projectDescription"
-rows="4"
-value={form.projectDescription || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
-</div>
-
-{/* Core Problem */}
-
-<div className="md:col-span-2">
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Core Problem
-</label>
-
-<textarea
-name="coreProblem"
-rows="3"
-value={form.coreProblem || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
-</div>
-
-{/* Target Audience */}
-
-<div>
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Target Audience
-</label>
-
-<textarea
-name="targetAudience"
-rows="3"
-value={form.targetAudience || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
-</div>
-
-{/* Business Goal */}
-
-<div>
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Business Goal
-</label>
-
-<textarea
-name="businessGoal"
-rows="3"
-value={form.businessGoal || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
-</div>
-
-{/* Key Features Summary */}
-
-<div className="md:col-span-2">
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Key Features Summary
-</label>
-
-<textarea
-name="keyFeaturesSummary"
-rows="3"
-value={form.keyFeaturesSummary || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
-/>
-</div>
-
-
-
-
-{/* Industry */}
-
-<div>
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Industry
-</label>
-
-<select
-name="industryId"
-value={form.industryId || ""}
-onChange={handleChange}
-className="w-full max-w border border-gray-300 rounded-lg px-4 py-3"
->
-
-<option value="">Select Industry</option>
-
-
-{industries.map((industry) => (
-<option key={industry.id} value={industry.id}>
-{industry.name}
-</option>
-))}
-
-</select>
-</div>
-
-
-{/* Budget */}
-<div className="space-y-2">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Budget Range
-  </label>
-  <div className="grid grid-cols-3 gap-3">
-    <div className="col-span-2">
-      <select
-        name="budgetCurrency"
-        value={budgetCurrency}
-        onChange={handleBudgetCurrencyChange}
-        className="w-full border border-gray-300 rounded-lg px-4 py-3 "
-      >
-        <option value="">Select Currency</option>
-        {currencies.map((currency) => (
-          <option key={currency.id} value={currency.symbol}>
-            {currency.symbol} ({currency.currencyName})
-          </option>
-        ))}
-      </select>
-    </div>
-    <div className="col-span-1">
-      <input
-        type="text"
-        name="budgetAmount"
-        value={budgetAmount}
-        onChange={handleBudgetAmountChange}
-        placeholder="e.g. 50000 - 100000"
-        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-      />
-    </div>
-  </div>
-</div>
-
-
-{/* Timeline */}
-
-<div className="md:col-span-2">
-
-<label className="block text-sm font-medium text-gray-700 mb-2">
-Timeline
-</label>
-
-<select
-name="timeline"
-value={form.timeline || ""}
-onChange={handleChange}
-className="w-full border border-gray-300 rounded-lg px-4 py-3"
->
-
-<option value="">Select Timeline</option>
-<option value="mvp_2_4_weeks">MVP (2-4 Weeks)</option>
-<option value="standard_1_2_months">Standard (1-2 Months)</option>
-<option value="complex_3_6_months">Complex (3-6 Months)</option>
-<option value="ongoing">Ongoing</option>
-
-</select>
-
-</div>
-
-
-{/* Buttons */}
-
-<div className="md:col-span-2 flex justify-end gap-3 mt-4">
-
-<button
-type="button"
-onClick={() => setShowCreateModal(false)}
-className="px-4 py-2 bg-gray-200 rounded-lg"
->
-Cancel
-</button>
-
-<button
-type="submit"
-
-className="px-5 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer transition-colors"
-disabled={!form.projectTitle || !form.projectType || !form.clientId || !form.projectDescription || !form.industryId || !form.budgetRange || !form.timeline}
->
-Create Project
-</button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-)}
 
           </div>
         </main>

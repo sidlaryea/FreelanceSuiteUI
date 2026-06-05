@@ -35,6 +35,7 @@ import ClientProposalPage from './ClientProposalPage';
 import ClientPaymentPage from './ClientPaymentPage';
 import ProposalSettingspage from './ProposalSettingspage';
 import ClientsPage from './ClientsPage';
+import Billing from './Billing';
 
 
 
@@ -87,6 +88,7 @@ function App() {
           <Route path="/Taxpage" element={<TaxPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/AuditPage" element={<AuditPage />} /> {/* Redirect all other paths to Home */}
           <Route path="ReportPage" element={<ReportPage />} /> {/* Redirect all other paths to Home */}
+          <Route path="/billing" element={<Billing />} />
           <Route path="/OnboardPage" element={<OnboardPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/ProjectOverviewPage" element={<ProjectOverviewPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
