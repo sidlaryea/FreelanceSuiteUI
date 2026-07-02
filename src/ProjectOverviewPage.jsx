@@ -4,6 +4,7 @@ import axios from "axios";
 
 import Sidebar from "./components/Sidebar";
 import CreateProjectModal from "./components/CreateProjectModal";
+import TopNav from "./components/Layout/TopNav";
 
 
 export default function ProjectOverviewsPage() {
@@ -25,7 +26,8 @@ export default function ProjectOverviewsPage() {
     projectDescription: "",
     industryId: "",
     budgetRange: "",
-    timeline: ""
+    timeline: "",
+    budgetCurrency:"",
   });
   const [industries, setIndustries] = useState([]);
   const [currencies, setCurrencies] = useState([]);
@@ -91,7 +93,7 @@ export default function ProjectOverviewsPage() {
     
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register",
+        "http://localhost:5214/api/Register/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -132,11 +134,11 @@ export default function ProjectOverviewsPage() {
     }
   };
 
-  const getIndustryNameById = (industryId) => {
-    if (!industryId) return "";
-    const industry = industries.find(ind => ind.id === parseInt(industryId));
-    return industry ? industry.name : "";
-  };
+  // const getIndustryNameById = (industryId) => {
+  //   if (!industryId) return "";
+  //   const industry = industries.find(ind => ind.id === parseInt(industryId));
+  //   return industry ? industry.name : "";
+  // };
 
   const fetchIndustries = async () => {
     const token = localStorage.getItem("jwtToken");
@@ -194,14 +196,15 @@ const createProjectOverview = async (formData) => {
         clientId: formData.clientId,
         projectTitle: formData.projectTitle,
         projectDescription: formData.projectDescription,
-        projectType: formData.projectType,
-        industry: getIndustryNameById(formData.industryId),
+        //projectType: formData.projectType,
+        industry: formData.industryId,
         budgetRange: formData.budgetRange,
         timeline: formData.timeline,
         businessGoal: formData.businessGoal,
-        targetAudience: formData.targetAudience,
+        //targetAudience: formData.targetAudience,
         coreProblem: formData.coreProblem,
-        keyFeaturesSummary: formData.keyFeaturesSummary
+        //keyFeaturesSummary: formData.keyFeaturesSummary,
+        budgetCurrency:budgetCurrency,
       };
       await axios.post(
         "http://localhost:5214/proposal/api/ProjectOverview",
@@ -216,16 +219,17 @@ const createProjectOverview = async (formData) => {
       setShowCreateModal(false);
       setForm({
         projectTitle: "",
-        projectType: "",
+        //projectType: "",
         clientId: "",
         coreProblem: "",
-        targetAudience: "",
+        //targetAudience: "",
         businessGoal: "",
-        keyFeaturesSummary: "",
+        //keyFeaturesSummary: "",
         projectDescription: "",
         industryId: "",
         budgetRange: "",
-        timeline: ""
+        timeline: "",
+        
       });
       fetchOverviews();
     } catch (error) {
@@ -236,7 +240,7 @@ const createProjectOverview = async (formData) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.projectTitle || !form.projectType || !form.clientId || !form.projectDescription || !form.industryId || !form.budgetRange || !form.timeline || !form.businessGoal || !form.coreProblem || !form.targetAudience || !form.keyFeaturesSummary) {
+    if (!form.projectTitle || !form.clientId || !form.projectDescription || !form.industryId || !form.budgetRange || !form.timeline || !form.businessGoal || !form.coreProblem ) {
       setError("Please fill in all required fields");
       return;
     }
@@ -259,18 +263,7 @@ const createProjectOverview = async (formData) => {
 
             <span className="text-slate-700 font-medium">AI Previews</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 w-52 focus-within:border-slate-400 transition-colors shadow-sm">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-
-              <input className="bg-transparent outline-none text-sm text-slate-700 flex-1 placeholder:text-slate-400" placeholder="Search…"/>
-            </div>
-            <button className="relative w-8 h-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500"/>
-            </button>
-          </div>
+          <TopNav />
         </header>
 
         {/* SCROLLABLE CONTENT */}
@@ -317,7 +310,7 @@ const createProjectOverview = async (formData) => {
                       {getIndustryName(overview.industry)}
                     </td>
                     <td className="p-4 text-sm text-slate-600">
-                      {overview.budgetCurrency} {overview.budgetRange}
+                       {overview.budgetRange}
                     </td>
                     <td className="p-4 text-sm text-slate-600">
                       {overview.timeline}

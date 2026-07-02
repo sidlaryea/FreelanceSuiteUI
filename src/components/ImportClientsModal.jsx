@@ -67,7 +67,7 @@ export default function ImportClientsModal({
     try {
       setSubmitting(true);
 
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("jwtToken");
 
       const formData = new FormData();
       // backend might expect a particular name; common conventions: file

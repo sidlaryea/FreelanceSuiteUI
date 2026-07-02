@@ -20,6 +20,9 @@ export default function SignatureSection({ onComplete, disabled, secondaryAction
 
     const signature = sigRef.current.toDataURL("image/png");
 
+    // Popup confirmation for user action
+    alert("Thanks! Your Signature Has Been Submitted.");
+
     onComplete({
       clientName: name.trim(),
       clientEmail: email.trim(),
@@ -29,37 +32,44 @@ export default function SignatureSection({ onComplete, disabled, secondaryAction
 
   return (
     <div className="space-y-6 border-t pt-8">
-
-      <h3 className="text-lg font-semibold">Sign to Accept</h3>
+      <h3 className="text-lg font-bold text-slate-900 flex items-center">
+        Sign to Accept
+      </h3>
 
       {/* Name */}
-      <input
-        type="text"
-        placeholder="Full Name"
-        className="w-full border p-3 rounded-lg"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        disabled={disabled}
-      />
+      <div>
+        <label className="text-sm font-medium text-slate-700">Name</label>
+        <input
+          type="text"
+          placeholder="e.g. John Doe"
+          className="mt-2 w-full h-11 rounded-2xl bg-white border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={disabled}
+        />
+      </div>
 
       {/* Email */}
-      <input
-        type="email"
-        placeholder="Email Address"
-        className="w-full border p-3 rounded-lg"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={disabled}
-      />
+      <div>
+        <label className="text-sm font-medium text-slate-700">Email</label>
+        <input
+          type="email"
+          placeholder="e.g. client@company.com"
+          className="mt-2 w-full h-11 rounded-2xl bg-white border border-slate-200 px-4 outline-none focus:ring-2 focus:ring-blue-500"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={disabled}
+        />
+      </div>
 
       {/* Signature Pad */}
-      <div className="border rounded-lg bg-white">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
         <SignatureCanvas
-                ref={sigRef}
-                penColor="black"
-                canvasProps={{ className: "w-full h-40" }}
-                clearOnResize={false}
-              />
+          ref={sigRef}
+          penColor="black"
+          canvasProps={{ className: "w-full h-40" }}
+          clearOnResize={false}
+        />
       </div>
 
       <div className="flex items-center justify-between gap-3">
@@ -67,7 +77,7 @@ export default function SignatureSection({ onComplete, disabled, secondaryAction
           <button
             onClick={() => sigRef.current.clear()}
             disabled={disabled}
-            className="text-sm text-slate-500 disabled:opacity-50 cursor-pointer"
+            className="cursor-pointer h-11 px-5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
             Clear Signature
           </button>
@@ -75,7 +85,7 @@ export default function SignatureSection({ onComplete, disabled, secondaryAction
           <button
             onClick={handleSave}
             disabled={disabled}
-            className="px-5 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
+            className="cursor-pointer h-11 px-6 rounded-2xl bg-slate-900 text-white hover:bg-black transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             Confirm & Accept
           </button>

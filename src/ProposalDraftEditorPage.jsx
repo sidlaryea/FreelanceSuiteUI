@@ -128,7 +128,7 @@ useEffect(() => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register",
+        "http://localhost:5214/api/Register/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,

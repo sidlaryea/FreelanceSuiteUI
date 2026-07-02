@@ -273,7 +273,7 @@ const closeChangePasswordDialog = () => {
     useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("jwtToken");
         const apiKey = localStorage.getItem("api");
 
         const res = await axios.get(

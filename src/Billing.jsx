@@ -1,17 +1,14 @@
 import Sidebar from "./components/Sidebar";
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Download, Plus, Filter, ChevronRight, TrendingUp } from "lucide-react";
 
-const invoices = [
-  { id: "INV-1001", client: "Cedar Fintech", amount: 4200, status: "Paid", date: "2026-05-14", method: "Visa" },
-  { id: "INV-1002", client: "Atlas Advisors", amount: 980, status: "Overdue", date: "2026-05-29", method: "Paystack" },
-  { id: "INV-1003", client: "Nova Retail", amount: 2350, status: "Pending", date: "2026-06-04", method: "Mastercard" },
-  { id: "INV-1004", client: "Cedar Fintech", amount: 4000, status: "Overdue", date: "2026-05-22", method: "Paystack" },
-];
+import {loadDashboardSummary as fetchDashboardSummary,loadInvoiceList,loadSubscriptionSummary as fetchSubscriptionSummary} from  "./services/clientService";
+import TopNav from "./components/Layout/TopNav";
 
-function formatMoney(amount) {
-  return `$${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-}
+
+
+
 
 function StatusPill({ status }) {
   const cls =
@@ -47,78 +44,135 @@ export default function Billing() {
     { name: "Usage & Limits", id: "Usage" },
   ];
 
-  const derived = useMemo(() => {
-    // This UI is currently using the hardcoded sample invoices.
-    // We compute “this month” based on the latest invoice month.
-    const sortedByDate = [...invoices].sort((a, b) => new Date(b.date) - new Date(a.date));
-    const latest = sortedByDate[0];
-    const latestMonthKey = latest ? `${latest.date.slice(0, 7)}` : null; // YYYY-MM
+ 
 
-    const monthInvoices = latestMonthKey
-      ? invoices.filter((inv) => inv.date.startsWith(latestMonthKey))
-      : invoices;
+const [invoiceList, setInvoiceList] = useState([]);
 
-    const revenueThisMonth = monthInvoices
-      .filter((i) => i.status === "Paid")
-      .reduce((sum, i) => sum + i.amount, 0);
+      useEffect(() => {
+        loadInvoices();
+      }, []);
 
-    const outstandingAmount = invoices
-      .filter((i) => i.status === "Overdue")
-      .reduce((sum, i) => sum + i.amount, 0);
+      const loadInvoices = async () => {
+        try {
+          const data = await loadInvoiceList();
+          setInvoiceList(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
-    const paidInvoicesCount = invoices.filter((i) => i.status === "Paid").length;
 
-    const overdueCount = invoices.filter((i) => i.status === "Overdue").length;
-    const pendingCount = invoices.filter((i) => i.status === "Pending").length;
 
-    const invoiceUsageLimit = 20;
-    const usedInvoices = invoices.length;
+ 
 
-    const recentActivity = [...invoices]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5);
+  const [dashboardSummary, setDashboardSummary] = useState(null);
+  const [subscriptionSummary, setSubscriptionSummary] = useState(null);
+  const [userData, setUserData] = useState(null);
 
-    // Top clients by spend
-    const byClient = new Map();
-    invoices.forEach((inv) => {
-      const current = byClient.get(inv.client) ?? 0;
-      byClient.set(inv.client, current + inv.amount);
+
+
+useEffect(() => {
+  loadDashboardData();
+  loadSubscriptionSummary();
+  loadUserProfile();
+}, []);
+
+const loadUserProfile = async () => {
+  try {
+    const token = localStorage.getItem("jwtToken");
+    const apiKey = localStorage.getItem("apiKey");
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-API-KEY": apiKey,
+      },
     });
-    const topClients = [...byClient.entries()]
-      .map(([client, total]) => ({ client, total }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 3);
+    setUserData(response.data);
+  } catch (error) {
+    console.error("Failed to load billing profile:", error);
+  }
+};
 
-    const biggestOverdue = [...invoices]
-      .filter((i) => i.status === "Overdue")
-      .sort((a, b) => b.amount - a.amount)[0];
+const loadDashboardData = async () => {
+  try {
+    const response = await fetchDashboardSummary();
 
-    return {
-      latestMonthKey,
-      monthInvoices,
-      revenueThisMonth,
-      outstandingAmount,
-      paidInvoicesCount,
-      overdueCount,
-      pendingCount,
-      usedInvoices,
-      invoiceUsageLimit,
-      recentActivity,
-      topClients,
-      biggestOverdue,
-    };
-  }, []);
+    setDashboardSummary(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-  const revenueValue = formatMoney(derived.revenueThisMonth || 0);
-  const outstandingValue = formatMoney(derived.outstandingAmount || 0);
+const loadSubscriptionSummary = async () => {
+  try {
+    const response = await fetchSubscriptionSummary();
 
-  const used = derived.usedInvoices;
-  const limit = derived.invoiceUsageLimit;
-  const remaining = Math.max(0, limit - used);
+    setSubscriptionSummary(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const topClients =
+  dashboardSummary?.topClients || [];
+
+function formatCurrency(n, currency) {
+  try {
+    return Number(n ?? 0).toLocaleString(undefined, {
+      style: "currency",
+      currency: currency || "USD",
+      maximumFractionDigits: 0,
+    });
+  } catch {
+    return `${Number(n ?? 0).toFixed(0)}`;
+  }
+}
+console.log("dashboardSummary", dashboardSummary);
+const currency =
+  dashboardSummary?.currency || "GHS";
+
+const revenueValue = formatCurrency(
+  dashboardSummary?.revenueGenerated || 0,
+  currency
+);
+
+// const outstandingValue = formatCurrency(
+//   dashboardSummary?.outstandingInvoices || 0,
+//   currency
+// );
+
+const used =
+  subscriptionSummary?.used || 0;
+
+const limit =
+  subscriptionSummary?.monthlyProposalLimit || 0;
+
+  const description = subscriptionSummary?.description;
+
+const remaining = subscriptionSummary?.remaining || 0;
+const plan = subscriptionSummary?.planName;
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
-      <Sidebar userData={{ company: "Workspace", profileImageUrl: "" }} />
+      <Sidebar
+        userData={
+          userData || {
+            company: "Workspace",
+            profileImageUrl: `${import.meta.env.BASE_URL}/default-avatar.png`,
+            name: "User",
+            email: "",
+          }
+        }
+      />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
@@ -133,10 +187,7 @@ export default function Billing() {
             <p className="text-sm text-slate-500 mt-1">Manage invoices, payments, and subscription usage.</p>
           </div>
 
-          <button className="h-11 px-5 rounded-2xl border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 transition flex items-center gap-2">
-            <Download size={16} />
-            Export
-          </button>
+          <TopNav/>
         </header>
 
         {/* Tabs Navigation */}
@@ -146,7 +197,7 @@ export default function Billing() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-4 text-sm font-medium border-b-2 transition ${
+                className={`px-5 py-4 text-sm font-medium border-b-2 transition cursor-pointer ${
                   activeTab === tab.id
                     ? "border-slate-900 text-slate-900"
                     : "border-transparent text-slate-600 hover:text-slate-900"
@@ -172,15 +223,15 @@ export default function Billing() {
                 />
 
                 <KpiCard
-                  title="Outstanding Amount"
-                  value={outstandingValue}
-                  footer={derived.overdueCount ? `${derived.overdueCount} invoices overdue` : "No overdue invoices"}
+                  title="Outstanding Invoices"
+                  value={`${dashboardSummary?.outstandingInvoiceCount ?? 0}  Outstanding`}
+                  // footer={`${dashboardSummary?.outstandingInvoiceCount ?? 0} invoices outstanding`}
                 />
 
-                <KpiCard title="Paid Invoices" value={String(derived.paidInvoicesCount)} footer={"Total invoices"} />
+                <KpiCard title="Paid Invoices" value={`${dashboardSummary?.paidInvoices ?? 0}`} footer={`${dashboardSummary?.totalInvoices ?? 0} total invoices`} />
 
                 <KpiCard
-                  title="Invoice Usage"
+                  title="Proposal Usage"
                   value={`${used}/${limit}`}
                   footer={`${remaining} remaining`}
                 />
@@ -203,7 +254,7 @@ export default function Billing() {
                         <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
                         <span className="text-sm text-slate-700">Overdue</span>
                       </div>
-                      <span className="text-sm font-semibold text-slate-900">{derived.overdueCount}</span>
+                      <span className="text-sm font-semibold text-slate-900">{dashboardSummary?.overdueCount ?? 0}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -211,7 +262,7 @@ export default function Billing() {
                         <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                         <span className="text-sm text-slate-700">Pending</span>
                       </div>
-                      <span className="text-sm font-semibold text-slate-900">{derived.pendingCount}</span>
+                      <span className="text-sm font-semibold text-slate-900">{dashboardSummary?.pendingCount ?? 0}</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -219,20 +270,29 @@ export default function Billing() {
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                         <span className="text-sm text-slate-700">Paid</span>
                       </div>
-                      <span className="text-sm font-semibold text-slate-900">{derived.paidInvoicesCount}</span>
+                      <span className="text-sm font-semibold text-slate-900">{dashboardSummary?.paidInvoices ?? 0}</span>
                     </div>
                   </div>
 
-                  {derived.biggestOverdue ? (
+                  {dashboardSummary?.biggestOutstanding ? (
                     <div className="mt-6 rounded-3xl bg-amber-50 border border-amber-100 p-4">
-                      <p className="text-sm font-medium text-amber-900">Biggest overdue</p>
-                      <p className="text-sm text-amber-800 mt-1">
-                        {derived.biggestOverdue.id} • {derived.biggestOverdue.client}
-                      </p>
-                      <p className="text-sm font-semibold text-amber-900 mt-1">
-                        {formatMoney(derived.biggestOverdue.amount)}
-                      </p>
-                    </div>
+                          <p className="text-sm font-medium text-amber-900">
+                            Biggest Outstanding
+                          </p>
+
+                          <p className="text-sm text-amber-800 mt-1">
+                            {dashboardSummary.biggestOutstanding.invoiceNumber}
+                            {" • "}
+                            {dashboardSummary.biggestOutstanding.customerName}
+                          </p>
+
+                          <p className="text-sm font-semibold text-amber-900 mt-1">
+                            {formatCurrency(
+                              dashboardSummary.biggestOutstanding.balanceDue,
+                              dashboardSummary.biggestOutstanding.currency
+                            )}
+                          </p>
+                        </div>
                   ) : null}
                 </div>
 
@@ -246,20 +306,21 @@ export default function Billing() {
                   </div>
 
                   <div className="mt-6 space-y-3">
-                    {derived.recentActivity.map((inv) => (
+                    {dashboardSummary?.recentActivity?.map((inv) => (
                       <div
-                        key={inv.id}
+                        key={inv.invoiceNumber}
                         className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/40 px-4 py-3"
                       >
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-slate-900 truncate">{inv.id}</p>
-                          <p className="text-sm text-slate-600 truncate">{inv.client}</p>
+                          <p className="text-sm font-semibold text-slate-900 truncate">{inv.invoiceNumber}</p>
+                          <p className="text-sm text-slate-600 truncate">{inv.clientName}</p>
                         </div>
 
                         <div className="flex items-center gap-3">
                           <div className="text-right">
-                            <p className="text-sm font-semibold text-slate-900">${inv.amount.toFixed(0)}</p>
-                            <p className="text-xs text-slate-500">{inv.date}</p>
+                            <p className="text-sm font-semibold text-slate-900">Total Amount:{formatCurrency(inv.amount, inv.currency)}</p>
+                            <p className="text-sm font-semibold text-slate-900">Amount Paid:{formatCurrency(inv.amountPaid, inv.currency)}</p>
+                            <p className="text-xs text-slate-500">{new Date(inv.date).toLocaleDateString()}</p>
                           </div>
                           <StatusPill status={inv.status} />
                         </div>
@@ -267,18 +328,21 @@ export default function Billing() {
                     ))}
                   </div>
 
-                  {derived.topClients?.length ? (
+                  {topClients?.length ? (
                     <div className="mt-6">
                       <h4 className="text-sm font-semibold text-slate-900">Top Clients</h4>
                       <div className="mt-3 space-y-3">
-                        {derived.topClients.map((c) => {
-                          const max = derived.topClients[0]?.total || 1;
-                          const width = Math.round((c.total / max) * 100);
+                        {topClients.map((client) => {
+                          const max = topClients[0]?.totalAmount || 1;
+                          const width = Math.round((client.totalAmount / max) * 100);
                           return (
-                            <div key={c.client}>
+                            <div key={client.clientName}>
                               <div className="flex items-center justify-between gap-4">
-                                <p className="text-sm text-slate-700">{c.client}</p>
-                                <p className="text-sm font-semibold text-slate-900">{formatMoney(c.total)}</p>
+                                <p className="text-sm text-slate-700">{client.clientName}</p>
+                                <p className="text-sm font-semibold text-slate-900">{formatCurrency(
+                  client.totalAmount,
+                  client.currency
+                )}</p>
                               </div>
                               <div className="mt-2 h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-blue-500 to-blue-600" style={{ width: `${width}%` }} />
@@ -321,24 +385,33 @@ export default function Billing() {
                       <tr>
                         <th className="px-6 py-4">Invoice ID</th>
                         <th className="px-6 py-4">Client</th>
-                        <th className="px-6 py-4">Amount</th>
+                        <th className="px-6 py-4">Currency</th>
+                        <th className="px-6 py-4">Total</th>
+                        <th className="px-6 py-4">Amount Paid</th>
+                        <th className="px-6 py-4">Balance</th>
                         <th className="px-6 py-4">Status</th>
-                        <th className="px-6 py-4">Date</th>
+                        <th className="px-6 py-4">Invoice Issue Date</th>
+                        <th className="px-6 py-4">Invoice Due Date</th>
                         <th className="px-6 py-4">Payment Method</th>
                         <th className="px-6 py-4">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {invoices.map((invoice) => (
+                      {invoiceList.map((invoice) => (
                         <tr key={invoice.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
-                          <td className="px-6 py-4 font-medium text-slate-900">{invoice.id}</td>
-                          <td className="px-6 py-4">{invoice.client}</td>
-                          <td className="px-6 py-4">${invoice.amount.toFixed(2)}</td>
+                          <td className="px-6 py-4 font-medium text-slate-900">{invoice.invoiceNumber}</td>
+                          <td className="px-6 py-4">{invoice.clientName}</td>
+                          <td className="px-6 py-4">{invoice.currency}</td>
+                          <td className="px-6 py-4">{invoice.total.toFixed(2)}</td>
+                          <td className="px-6 py-4">{invoice.amountPaid.toFixed(2)}</td>
+                          <td className="px-6 py-4">{invoice.balanceDue.toFixed(2)}</td>
+
                           <td className="px-6 py-4">
                             <StatusPill status={invoice.status} />
                           </td>
-                          <td className="px-6 py-4">{invoice.date}</td>
-                          <td className="px-6 py-4">{invoice.method}</td>
+                          <td className="px-6 py-4">{invoice.issueDate}</td>
+                          <td className="px-6 py-4">{invoice.dueDate}</td>
+                          <td className="px-6 py-4">{invoice.paymentMethod}</td>
                           <td className="px-6 py-4">
                             <button className="rounded-2xl bg-slate-100 px-3 py-2 text-sm text-slate-700 hover:bg-slate-200 transition">
                               View
@@ -366,25 +439,25 @@ export default function Billing() {
                       <div>
                         <div className="flex items-center justify-between gap-4 mb-2">
                           <p className="text-sm font-medium text-slate-900">Current Plan</p>
-                          <p className="text-base font-semibold text-slate-900">Starter</p>
+                          <p className="text-base font-semibold text-slate-900">{plan}</p>
                         </div>
-                        <p className="text-sm text-slate-500">Basic plan for growing teams</p>
+                        <p className="text-sm text-slate-500">{description}</p>
                       </div>
 
                       <div>
                         <div className="flex items-center justify-between gap-4 mb-4">
                           <p className="text-sm font-medium text-slate-900">Invoice Limit</p>
-                          <p className="text-base font-semibold text-slate-900">{derived.invoiceUsageLimit}</p>
+                          <p className="text-base font-semibold text-slate-900">{limit}</p>
                         </div>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-600">Used: {derived.usedInvoices}</span>
-                            <span className="text-slate-600">Remaining: {Math.max(0, derived.invoiceUsageLimit - derived.usedInvoices)}</span>
+                            <span className="text-slate-600">Used: {used}</span>
+                            <span className="text-slate-600">Remaining: {remaining}</span>
                           </div>
                           <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                             <div
                               className="bg-gradient-to-r from-blue-500 to-blue-600 h-full"
-                              style={{ width: `${Math.round((derived.usedInvoices / Math.max(1, derived.invoiceUsageLimit)) * 100)}%` }}
+                              style={{ width: `${Math.round((used / Math.max(1, limit)) * 100)}%` }}
                             ></div>
                           </div>
                         </div>
@@ -408,7 +481,7 @@ export default function Billing() {
                       <p className="text-sm text-slate-200 mb-6">
                         Upgrade to Pro or Enterprise for unlimited invoices and advanced features.
                       </p>
-                      <button className="w-full h-12 rounded-2xl bg-white text-slate-900 font-semibold hover:bg-slate-100 transition">
+                      <button className="cursor-pointer w-full h-12 rounded-2xl bg-white text-slate-900 font-semibold hover:bg-slate-100 transition">
                         Upgrade Plan
                       </button>
                       <p className="mt-4 text-xs text-slate-300 text-center">No contract. Cancel anytime.</p>

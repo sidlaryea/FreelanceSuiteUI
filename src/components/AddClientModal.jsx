@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { X, UploadCloud } from "lucide-react";
+import { FilePlus2, UploadCloud, X } from "lucide-react";
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL ;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const flag = (code) =>
   code?.toUpperCase().replace(/./g, (c) =>
@@ -60,7 +60,9 @@ export default function AddClientModal({
     axios
       .get("http://localhost:5214/api/Country")
       .then((res) => {
-        const sortedCountries = res.data.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedCountries = res.data.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         setCountries(sortedCountries);
       })
       .catch((err) => console.error("Failed to fetch countries:", err));
@@ -87,9 +89,9 @@ export default function AddClientModal({
 
   const uploadClientLogo = async (file, clientId) => {
     if (!file || !clientId) return null;
-    
+
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("jwtToken");
       const apiKey = localStorage.getItem("apiKey");
       const logoData = new FormData();
       logoData.append("file", file);
@@ -125,7 +127,7 @@ export default function AddClientModal({
     try {
       setSubmitting(true);
 
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("jwtToken");
       const apiKey = localStorage.getItem("apiKey");
 
       // Create client first (without logo)
@@ -194,7 +196,10 @@ export default function AddClientModal({
         <div className="p-6 bg-gradient-to-r from-slate-900 via-slate-800 to-blue-900 text-white">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold">Add New Client</h2>
+              <h2 className="flex items-center gap-2 text-2xl font-bold">
+                <FilePlus2 size={22} />
+                Add New Client
+              </h2>
               <p className="text-slate-200 mt-1">
                 Create a client profile and start managing proposals.
               </p>
@@ -203,7 +208,7 @@ export default function AddClientModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center"
+              className="cursor-pointer w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center"
             >
               <X size={18} />
             </button>
@@ -242,7 +247,9 @@ export default function AddClientModal({
             </div>
 
             <div>
-              <label className="text-sm font-medium text-slate-700">Company Name</label>
+              <label className="text-sm font-medium text-slate-700">
+                Company Name
+              </label>
               <input
                 name="companyName"
                 value={form.companyName}
@@ -313,8 +320,16 @@ export default function AddClientModal({
                   <UploadCloud size={18} className="text-slate-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm ${clientLogoFile ? "text-slate-900 font-medium" : "text-slate-500"}`}>
-                    {clientLogoFile ? clientLogoFile.name : "Click to upload client logo (PNG, JPG, SVG)"}
+                  <p
+                    className={`text-sm ${
+                      clientLogoFile
+                        ? "text-slate-900 font-medium"
+                        : "text-slate-500"
+                    }`}
+                  >
+                    {clientLogoFile
+                      ? clientLogoFile.name
+                      : "Click to upload client logo (PNG, JPG, SVG)"}
                   </p>
                   {clientLogoPreview && (
                     <img
@@ -324,7 +339,12 @@ export default function AddClientModal({
                     />
                   )}
                 </div>
-                <input type="file" accept="image/*" onChange={onClientFile} className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onClientFile}
+                  className="hidden"
+                />
               </label>
               <p className="text-xs text-slate-500 mt-2">
                 Upload a logo image to preview it here.
@@ -336,7 +356,7 @@ export default function AddClientModal({
             <button
               type="button"
               onClick={onClose}
-              className="h-11 px-5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
+              className="cursor-pointer h-11 px-5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
               disabled={submitting}
             >
               Cancel
@@ -345,7 +365,7 @@ export default function AddClientModal({
             <button
               type="submit"
               disabled={submitting || !canSubmit}
-              className="h-11 px-6 rounded-2xl bg-slate-900 text-white hover:bg-black transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="cursor-pointer h-11 px-6 rounded-2xl bg-slate-900 text-white hover:bg-black transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? "Adding..." : "Add Client"}
             </button>

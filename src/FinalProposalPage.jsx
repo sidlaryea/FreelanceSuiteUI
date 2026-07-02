@@ -57,7 +57,7 @@ export default function FinalProposalPage() {
     const apiKey = localStorage.getItem("apiKey");
 
     try {
-      const response = await axios.get("http://localhost:5214/api/Register", {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -115,6 +115,7 @@ export default function FinalProposalPage() {
         }
       );
       alert("Proposal sent to client successfully!");
+       window.location.reload();
     } catch (error) {
       console.error("Failed to send proposal", error);
       alert("Failed to send proposal");

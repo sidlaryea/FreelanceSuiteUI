@@ -7,7 +7,7 @@ const useAuthCheck = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("jwtToken");
     if (!token) {
       navigate("/login", { replace: true });
       return;

@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronRight,
   Check,
@@ -13,8 +13,14 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import RegisterModalHost from './components/Ui/RegisterModalHost';
+
 
 export default function FreelanceSuiteLanding() {
+
+  // Register modal (HTML <dialog>)
+  // Triggered by the CTA buttons above via document.getElementById('register-modal').showModal()
+
   // const [email, ] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -24,7 +30,7 @@ export default function FreelanceSuiteLanding() {
   };
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
@@ -121,8 +127,14 @@ export default function FreelanceSuiteLanding() {
 className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
               required
             /> */}
-            <button onClick={() => navigate('/Registration')} 
-              className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition cursor-pointer">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('register-modal');
+                if (el && typeof el.showModal === 'function') el.showModal();
+              }}
+              className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition cursor-pointer"
+            >
               Start Free — No Credit Card
             </button>
           </form>
@@ -279,8 +291,9 @@ className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-bl
               price="$0"
               features={[
                 "3 Proposals / month",
-                "Basic Invoicing",
-                "5% Transaction Fee"
+                "AI Proposal Generator",
+                "Proposal Scoring",
+                "Basic Invoicing"
               ]}
             />
 
@@ -290,9 +303,10 @@ className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-bl
               highlight
               features={[
                 "Unlimited Proposals",
-                "AI Generation",
-                "Automated Invoicing",
-                "2% Transaction Fee"
+                "Proposal Scoring",
+                "Client Portal",
+                "Proposal Analytics",
+                "Advanced Invoicing"
               ]}
             />
 
@@ -300,8 +314,10 @@ className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-bl
               title="Business"
               price="$79"
               features={[
-                "Team Access",
+                "Everything in Pro",
+                "Team Members",
                 "Custom Branding",
+                "White Label Proposals",
                 "Advanced Reporting"
               ]}
             />
@@ -322,15 +338,20 @@ className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-bl
             and get paid faster.
           </p>
 
-          <button 
-          onClick={() => navigate('/Registration')}
-          className="cursor-pointer px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('register-modal');
+              if (el && typeof el.showModal === 'function') el.showModal();
+            }}
+            className="cursor-pointer px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+          >
             Start Free — No Credit Card
           </button>
         </div>
       </section>
 
-      {/* Enhanced Footer */}
+      <RegisterModalHost />
       <footer className="bg-gray-900 text-white py-12 mt-auto">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center">

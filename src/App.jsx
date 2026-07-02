@@ -36,6 +36,14 @@ import ClientPaymentPage from './ClientPaymentPage';
 import ProposalSettingspage from './ProposalSettingspage';
 import ClientsPage from './ClientsPage';
 import Billing from './Billing';
+import NotificationsPage from './NotificationsPage';
+import { ToastProvider } from "./components/ToastProvider";
+import ClientProjectPage from "./ClientProjectPage";
+
+
+
+
+
 
 
 
@@ -50,8 +58,9 @@ function App() {
 
   return (
     
-      <Router basename="/FreelanceLandingPage">
-        <Routes>
+      <ToastProvider>
+        <Router basename="/FreelanceLandingPage">
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/login" element={<Login />} />
@@ -89,7 +98,9 @@ function App() {
           <Route path="/AuditPage" element={<AuditPage />} /> {/* Redirect all other paths to Home */}
           <Route path="ReportPage" element={<ReportPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/billing" element={<Billing />} />
+          <Route path="/Notifications" element={<NotificationsPage />} />
           <Route path="/OnboardPage" element={<OnboardPage />} /> {/* Redirect all other paths to Home */}
+
           <Route path="/ProjectOverviewPage" element={<ProjectOverviewPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
           <Route path="/ProposalDraftPage" element={<ProposalDraftPage />} />
@@ -98,15 +109,17 @@ function App() {
           <Route path="/proposal/view/:publicId" element={<ClientSignaturePage />} />
           <Route path="/client/proposal/:token" element={<ClientProposalPage />} />
           <Route path="/client/payment/:token" element={<ClientPaymentPage />} />
+          <Route path="/client/project/:token" element={<ClientProjectPage />} />
           
 
           <Route path="*" element={<Home />} /> {/* Redirect all other paths to Home */}
 
 
+
         </Routes>
         
       </Router>
-      
+      </ToastProvider>
     
   );
 }

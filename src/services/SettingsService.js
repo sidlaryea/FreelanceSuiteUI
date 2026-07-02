@@ -13,13 +13,18 @@ export const getIndustries = async () => {
 };
 
 export const getProfile = async (token) => {
-  const res = await axios.get(`${API}/api/Register/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return res.data;
+  try {
+    const res = await axios.get(`${API}/api/Register/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("PROFILE API ERROR:", error);
+    console.error("ERROR RESPONSE:", error.response);
+    return null;
+  }
 };
 
 export const getOrganization = async (token, apiKey) => {

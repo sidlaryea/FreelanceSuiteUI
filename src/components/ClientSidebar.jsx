@@ -1,4 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+
 import {
   FileText,
   CreditCard,
@@ -12,6 +14,8 @@ import {
 export default function ClientSidebar({ proposal }) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [lockedModalOpen, setLockedModalOpen] = useState(false);
 
   const token = proposal?.publicToken;
 
@@ -32,10 +36,11 @@ export default function ClientSidebar({ proposal }) {
           path: `/client/proposal/${token}`,
         },
         {
-          label: "Project",
+          label: "Project Tracker",
           icon: LayoutDashboard,
           
-          path: `/client/project/${proposal?.projectId}`,
+          path: `/client/project/${token}`,
+          locked: true,
         },
       ],
     },
@@ -46,12 +51,14 @@ export default function ClientSidebar({ proposal }) {
           label: "Payment",
           icon: CreditCard,
           path: `/client/payment/${token}`,
+          
         },
         {
           label: "Invoices",
           icon: Receipt,
           path: `/client/invoices`,
           badge: unpaidInvoices > 0 ? unpaidInvoices : null,
+          locked: true,
         },
       ],
     },
@@ -63,6 +70,7 @@ export default function ClientSidebar({ proposal }) {
           icon: MessageCircle,
           path: `/client/messages`,
           badge: unreadMessages > 0 ? unreadMessages : null,
+          locked: true,
         },
       ],
     },
@@ -73,13 +81,14 @@ export default function ClientSidebar({ proposal }) {
           label: "Profile",
           icon: User,
           path: `/client/profile`,
+          locked: true,
         },
       ],
     },
   ];
 
   return (
-    <aside className="sticky top-0 h-screen overflow-hidden bg-slate-950 text-white flex flex-col border-r border-white/10">
+    <aside className="sticky top-0 h-screen w-85 overflow-hidden bg-slate-950 text-white flex flex-col border-r border-white/10">
 
       {/* 🔷 HEADER / BRAND */}
       <div className="px-6 py-5 border-b border-white/10 ">
@@ -98,7 +107,7 @@ export default function ClientSidebar({ proposal }) {
           Project
         </p>
 
-        <h2 className="mt-1 text-sm font-medium leading-snug">
+        <h2 className="mt-1 text-sm font-small leading-snug break-words">
           {proposal?.title || "Project Agreement"}
         </h2>
 
@@ -109,6 +118,35 @@ export default function ClientSidebar({ proposal }) {
           </span>
         </div>
       </div>
+
+      {/* 🔷 MODAL (LOCKED ITEM) */}
+      {lockedModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6">
+            <h3 className="text-lg font-semibold text-slate-900">Access Locked</h3>
+            <p className="text-sm text-slate-600 mt-2">
+              This section is locked. Please contact support.
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                className="flex-1 rounded-xl border border-slate-200 py-2 text-sm hover:bg-slate-50 cursor-pointer"
+                onClick={() => setLockedModalOpen(false)}
+              >
+                Close
+              </button>
+              <button
+                className="flex-1 rounded-xl bg-slate-900 text-white py-2 text-sm hover:bg-black cursor-pointer"
+                onClick={() => {
+                  setLockedModalOpen(false);
+                  navigate("/client/support");
+                }}
+              >
+                Contact Support
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* 🔷 NAVIGATION */}
       <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto ">
@@ -126,7 +164,13 @@ export default function ClientSidebar({ proposal }) {
                return (
                   <button
                     key={item.label}
-                    onClick={() => navigate(item.path)}
+                    onClick={() => {
+                      if (item.locked) {
+                        setLockedModalOpen(true);
+                        return;
+                      }
+                      navigate(item.path);
+                    }}
                     className={` cursor-pointer w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition
                       ${
                         active

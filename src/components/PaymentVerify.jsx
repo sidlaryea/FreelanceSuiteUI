@@ -20,7 +20,7 @@ const PaymentVerify = () => {
       }
 
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("jwtToken");
 
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/payment/verify/${reference}`,

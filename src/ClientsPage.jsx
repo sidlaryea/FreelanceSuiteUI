@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "./components/Sidebar";
-import { getCrmClients, getClientRecommendations } from "./services/clientService";
+import axios from "axios";
+import { getCrmClients, getClientRecommendations,getDashboardSummary } from "./services/clientService";
 import AddClientModal from "./components/AddClientModal";
 import ImportClientsModal from "./components/ImportClientsModal";
+
 
 
 
@@ -30,15 +32,15 @@ import {
 
 
 
-function formatCurrency(n) {
+function formatCurrency(n, invoiceCurrency) {
   try {
-    return n.toLocaleString(undefined, {
+    return Number(n ?? 0).toLocaleString(undefined, {
       style: "currency",
-      currency: "USD",
+      currency: invoiceCurrency || "USD",
       maximumFractionDigits: 0,
     });
   } catch {
-    return `$${Number(n || 0).toFixed(0)}`;
+    return `${Number(n ?? 0).toFixed(0)}`;
   }
 }
 
@@ -46,18 +48,22 @@ export default function ClientsPage() {
   const [query, setQuery] = useState("");
   const [showAddClient, setShowAddClient] = useState(false);
   const [showImportClients, setShowImportClients] = useState(false);
-
+  const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("All Clients");
   const [selectedClientId, setSelectedClientId] = useState("");
   const [clients,setClients] = useState([]);
   const [loading,setLoading] = useState(true);
   const [activities,setActivities] = useState([]);
   const [recommendation,setRecommendations] = useState([]);
+  const [dashboardSummary, setDashboardSummary] = useState(null);
+  const [activeNav, setActiveNav] = useState("All Clients");
   
 
 
   useEffect(() => {
+    fetchUserData();
     fetchClients();
+
   }, []);
 
   const loadRecommendations = useCallback(async () => {
@@ -70,6 +76,47 @@ export default function ClientsPage() {
   }
 }, [selectedClientId]);
 
+
+
+const loadDashboardSummary = async () => {
+  try {
+    const response = await getDashboardSummary(selectedClientId);
+
+    setDashboardSummary(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+useEffect(() => {
+  if (!selectedClientId) return;
+
+  loadDashboardSummary();
+  
+}, [selectedClientId]);
+
+
+
+
+const fetchUserData = async () => {
+    const token = localStorage.getItem("jwtToken");
+    const apiKey = localStorage.getItem("apiKey");
+    if (!token) return;
+    try {
+      
+         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-API-KEY": apiKey
+          }
+        }
+      );
+      setUserData(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const fetchClients = async () => {
     try {
@@ -119,7 +166,7 @@ export default function ClientsPage() {
 
   
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("jwtToken");
 const apiKey = localStorage.getItem("apiKey");
 
 const getClientActivities = useCallback(async (clientId) => {
@@ -172,15 +219,15 @@ useEffect(() => {
 
   const totalClients = clients.length;
 
-const totalRevenue = clients.reduce(
-  (sum, c) => sum + (c.lifetimeValue || 0),
-  0
-);
+const paidInvoices = dashboardSummary
+    ? `${dashboardSummary.paidInvoices} `
+    : "0 ";
+       
 
-const totalOutstanding = clients.reduce(
-  (sum, c) => sum + (c.outstandingAmount || 0),
-  0
-);
+const outstandingValue =
+  dashboardSummary
+    ? `${dashboardSummary.outstandingInvoiceCount} `
+    : "0 ";
 
 const totalProposals = clients.reduce(
   (sum, c) => sum + (c.proposalCount || 0),
@@ -216,12 +263,9 @@ const winRate =
 
 
   return (
-    <div
-      className="flex h-screen bg-[#f6f8fc] overflow-hidden"
-      style={{ fontFamily: "'Outfit', sans-serif" }}
-    >
+    <div className="flex h-screen bg-[#f6f8fc] overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
       {/* KEEPING YOUR SIDEBAR UNTOUCHED */}
-      <Sidebar userData={{ company: "Workspace", profileImageUrl: "" }} />
+      <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} userData={userData} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* PREMIUM HEADER */}
@@ -239,6 +283,8 @@ const winRate =
               Manage customer relationships, proposals, invoices and engagement.
             </p>
           </div>
+
+          
 
           <div className="flex items-center gap-3">
             <button
@@ -285,13 +331,14 @@ const winRate =
                   
                 },
                 {
-                  label: "Revenue Generated",
-                  value: formatCurrency(totalRevenue),
+                  label: "Paid Invoices",
+                  value: paidInvoices,
+                  
                   
                 },
                 {
                   label: "Outstanding Invoices",
-                  value: formatCurrency(totalOutstanding),
+                  value: (outstandingValue),
                   
                 },
               ].map((card) => (
@@ -306,6 +353,10 @@ const winRate =
                       <h2 className="text-3xl font-bold text-slate-900 mt-3">
                         {card.value}
                       </h2>
+                      {card.subtitle && (
+                        <p className="mt-2 text-sm text-slate-500">
+                          {card.subtitle}
+                        </p>)}
                     </div>
 
                     <div className="w-11 h-11 rounded-2xl bg-emerald-50 flex items-center justify-center">
@@ -503,7 +554,7 @@ const winRate =
                           Revenue
                         </p>
                         <h4 className="text-xl font-bold mt-2">
-                          {formatCurrency(client.lifetimeValue)}
+{formatCurrency(client.paidAmount, client.invoiceCurrency)}
                         </h4>
                       </div>
 
@@ -513,7 +564,7 @@ const winRate =
                         </p>
                         <h4 className="text-xl font-bold mt-2">
                           {formatCurrency(
-                            client.outstandingAmount
+                            client.outstandingAmount,client.invoiceCurrency
                           )}
                         </h4>
                       </div>
@@ -715,7 +766,7 @@ const winRate =
       </p>
 
       <p className="font-medium text-slate-900">
-        {formatCurrency(selectedClient.lifetimeValue)}
+        {formatCurrency(selectedClient.paidAmount,selectedClient.invoiceCurrency)}
       </p>
     </div>
 
@@ -725,7 +776,7 @@ const winRate =
       </p>
 
       <p className="font-medium text-slate-900">
-        {formatCurrency(selectedClient.outstandingAmount)}
+        {formatCurrency(selectedClient.outstandingAmount,selectedClient.invoiceCurrency)}
       </p>
     </div>
   </div>

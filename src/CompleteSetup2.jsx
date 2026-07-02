@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 //import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL;
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./assets/onboard.css";
+import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 // ─── SVG icons ────────────────────────────────────────────────────────────────
 const CheckIco = () => (
@@ -66,6 +70,14 @@ function Skeleton() {
     </div>
   );
 }
+const token = localStorage.getItem("jwtToken");
+let firstName = "";
+
+if (token) {
+  const decoded = jwtDecode(token);
+  firstName = decoded.FirstName;
+}
+
 
 const flag = (code) =>
   code.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
@@ -122,6 +134,30 @@ export default function CompleteSetup() {
   
   const navigate = useNavigate();
 
+  // Budget range helpers: store budgetRange in DB as "<currencyCode> <amount>"
+  const handleBudgetCurrencyChange = (e) => {
+  const currency = e.target.value;
+
+  const amountOnly = form.budgetRange
+    ?.replace(/^[A-Z]{3}\s*/, "")
+    ?.trim() || "";
+
+  setForm((prev) => ({
+    ...prev,
+    budgetCurrency: currency,
+    budgetRange: `${currency} ${amountOnly}`.trim(),
+  }));
+};
+
+  const handleBudgetAmountChange = (e) => {
+  const amount = e.target.value;
+
+  setForm((prev) => ({
+    ...prev,
+    budgetRange: `${prev.budgetCurrency} ${amount}`.trim(),
+  }));
+};
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
@@ -164,7 +200,7 @@ export default function CompleteSetup() {
   
 
   useEffect(() => {
-    axios.get("http://localhost:5214/api/Industries")
+    axios.get(`${API_URL}/api/Industries`)
       .then((res) => {
         const sortedIndustries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setIndustries(sortedIndustries);
@@ -173,7 +209,7 @@ export default function CompleteSetup() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:5214/api/Country")
+    axios.get(`${API_URL}/api/Country`)
       .then((res) => {
         const sortedCountries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setCountries(sortedCountries);
@@ -227,7 +263,7 @@ const orgInfoPayload = {
     website: form.organizationWebsite,
 };
 const response = await axios.post(
-  "http://localhost:5214/proposal/api/Organization",
+  `${API_URL}/proposal/api/Organization`,
   orgInfoPayload,
   {
     headers: {
@@ -243,7 +279,7 @@ if (orgLogoFile && orgId) {
   const logoData = new FormData();
   logoData.append("file", orgLogoFile);
   await axios.post(
-    `http://localhost:5214/proposal/api/Organization/update-logo/${orgId}`,
+    `${API_URL}/proposal/api/Organization/update-logo/${orgId}`,
 
     logoData,
     {
@@ -276,7 +312,7 @@ const saveClientInfo = async () => {
   };
 
   const response = await axios.post(
-    "http://localhost:5214/proposal/api/Client",
+    `${API_URL}/proposal/api/Client`,
     clientInfoPayload,
     {
       headers: {
@@ -297,7 +333,7 @@ const saveClientInfo = async () => {
     logoData.append("file", clientLogoFile);
 
     await axios.post(
-      `http://localhost:5214/proposal/api/Client/update-logo/${clientId}`,
+      `${API_URL}/proposal/api/Client/update-logo/${clientId}`,
       logoData,
       {
         headers: {
@@ -335,7 +371,7 @@ const saveClientInfo = async () => {
   try {
 
     const response = await axios.post(
-      "http://localhost:5214/proposal/api/ProjectOverview",
+      `${API_URL}/proposal/api/ProjectOverview`,
       projectPayload,
       {
         headers: {
@@ -378,7 +414,7 @@ const saveClientInfo = async () => {
   try {
 
     const previewResponse = await axios.post(
-      `http://localhost:5214/proposal/api/ProposalAi/generate-preview/${form.requirementId || requirementId}`,
+      `${API_URL}/proposal/api/ProposalAi/generate-preview/${form.requirementId || requirementId}`,
       {},
       {
         headers: {
@@ -396,7 +432,7 @@ const saveClientInfo = async () => {
     const idToSave = form.requirementId || requirementId;
     if (idToSave) {
       await axios.put(
-        `http://localhost:5214/proposal/api/ProposalAi/update-preview/${idToSave}`,
+        `${API_URL}/proposal/api/ProposalAi/update-preview/${idToSave}`,
         { html: preview },
         {
           headers: {
@@ -436,7 +472,7 @@ const savePaymentSetup = async () => {
   };
 
   await axios.post(
-    "http://localhost:5214/api/PaymentSetup/Save User Payment Setup",
+    `${API_URL}/api/PaymentSetup/Save User Payment Setup`,
     paymentPayload,
     {
       headers: {
@@ -450,7 +486,7 @@ const handleFinish = async () => {
    const token = localStorage.getItem("jwtToken");
   const apiKey = localStorage.getItem("apiKey");
   const statusRes = await axios.get(
-    "http://localhost:5214/api/onboarding/status",
+    `${API_URL}/api/onboarding/status`,
     { headers: {
         Authorization: `Bearer ${token}`,
         "X-API-KEY": apiKey
@@ -553,7 +589,7 @@ const validateBeforeFinish = () => {
         <div className="cs-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <img src="./logo.png" alt="Logo" className="h-10 w-12 mb-4 mt-2 rounded " />
         
-          <div className="cs-header-title" style={{ marginTop: '16px' }}>Create Your First Proposal</div>
+          <div className="cs-header-title" style={{ marginTop: '16px' }}>Welcome! {firstName} Lets Create Your First Proposal</div>
           <div className="cs-header-sub">Help us personalize your Proposal by completing these four quick steps.</div>
           <div className="cs-trail">
             {STEPS.map((s, i) => (
@@ -678,7 +714,11 @@ const validateBeforeFinish = () => {
       </F>
 
     </div>
+    <Link className="cs-skip block text-center " to="/dashboard">
+  Click Here To Skip for now — configure later in dashboard
+</Link>
   </div>
+  
 )}
 
           {/* Tab 1 – Client Info */}
@@ -754,7 +794,7 @@ const validateBeforeFinish = () => {
                       className="cs-select"
                       name="budgetCurrency"
                       value={form.budgetCurrency}
-                      onChange={(e) => setForm(f => ({ ...f, budgetCurrency: e.target.value }))}
+                      onChange={handleBudgetCurrencyChange}
                     >
                       {currencies.map((c) => (
                         <option key={c.id ?? c.code} value={c.code}>
@@ -763,17 +803,13 @@ const validateBeforeFinish = () => {
                       ))}
                     </select>
                     <input
-                      className="cs-input"
-                      style={{ width: "100%" }}
-
-                      name="budgetRange"
-                      placeholder="E.g. 5,000 – 15,000"
-                      value={form.budgetRange}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setForm(f => ({ ...f, budgetRange: value }));
-                      }}
-                    />
+                  className="cs-input"
+                  style={{ width: "100%" }}
+                  name="budgetRange"
+                  placeholder="E.g. 5000"
+                  value={form.budgetRange?.replace(/^[A-Z]{3}\s*/, "") || ""}
+                  onChange={handleBudgetAmountChange}
+                />
                   </div>
                 </F>
                 <F label="Timeline" span2>

@@ -1,8 +1,9 @@
-
-
-
-
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNotifications } from "../Context/NotificationContext";
+import { loadSubscriptionSummary } from "../services/clientService";
+
+
 
 // ─── ICONS (inline SVG — no emoji) ──────────────────────────────────────────
 const Icon = {
@@ -58,12 +59,24 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Debug logging for userData
-  console.log('Sidebar userData:', userData);
-  console.log('Sidebar profileImageUrl:', userData?.profileImageUrl);
-
-  const unreadNotifications = userData?.unreadNotifications ?? 3;
+  const [subscription, setSubscription] = useState(null);
+  const [subscriptionError, setSubscriptionError] = useState(null);
+  const { unreadNotifications } = useNotifications();
   const unpaidInvoices = userData?.unpaidInvoices ?? 0;
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const response = await loadSubscriptionSummary();
+        setSubscription(response);
+      } catch (error) {
+        setSubscriptionError("Unable to load subscription details.");
+        console.error("Sidebar subscription fetch error:", error);
+      }
+    };
+
+    fetchSubscription();
+  }, []);
 
   const navSections = [
     {
@@ -97,7 +110,7 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
         {
           label: "Notifications",
           icon: Icon.bell,
-          path: "/Settings",
+          path: "/Notifications",
           badge: unreadNotifications > 0 ? unreadNotifications : null,
         },
       ],
@@ -138,14 +151,28 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
       </div>
 
       <div className="px-6 py-5 border-b border-white/10">
-        <p className="text-xs text-white/50 uppercase tracking-wide">Workspace</p>
-        <h2 className="mt-1 text-sm font-medium leading-snug">
-          {userData?.company || "Your account"}
-        </h2>
-        <div className="mt-3 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span className="text-xs text-emerald-400 font-medium">Active</span>
-        </div>
+        
+        {subscription ? (
+          <div className="mt-3 space-y-2 text-xs text-white/70">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium text-white">{subscription.planName} Plan</span>
+              
+            </div>
+            <p>{subscription.description}</p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span className="text-xs text-emerald-400 font-medium">Active</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span className="text-xs text-emerald-400 font-medium">Active</span>
+          </div>
+        )}
+        {subscriptionError && (
+          <p className="mt-3 text-xs text-rose-300">{subscriptionError}</p>
+        )}
       </div>
 
       <nav className="  flex-1 px-4 py-6 space-y-6 overflow-y-auto">
@@ -210,13 +237,13 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
                 src={userData?.profileImageUrl || `${import.meta.env.BASE_URL}/default-avatar.png`}
                 alt={userData?.name || userData?.email || "User avatar"}
                 className="w-full h-full object-cover"
-                
-                
               />
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium truncate">{userData?.name || userData?.email || "User"}</p>
-              <p className="text-xs text-white/50">Pro Plan</p>
+              <p className="text-xs text-white/50">
+                {subscription?.planName ? `${subscription.planName} Plan` : "Loading plan..."}
+              </p>
             </div>
           </div>
           <button

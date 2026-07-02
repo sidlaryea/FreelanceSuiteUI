@@ -10,6 +10,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import Sidebar from "./components/Sidebar";
+import UpgradeLimitModal from "./components/Ui/UpgradeLimitModal"
 
 
 // Icons (same as Dashboard2)
@@ -49,6 +50,7 @@ export default function ProjectOverviewPreviewPage() {
   const [previews, setPreviews] = useState([]);
   const [selectedPreviewId, setSelectedPreviewId] = useState(null);
   const [pricingItems, setPricingItems] = useState([]);
+const [showUpgradeModal,setShowUpgradeModal] = useState(false);
   
 
 
@@ -311,7 +313,7 @@ useEffect(() => {
     
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register",
+        "http://localhost:5214/api/Register/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -424,6 +426,7 @@ useEffect(() => {
     setSelectedPreviewId(newPreview.id);
     setEditedHtml(newPreview.html);
     editor?.commands.setContent(newPreview.html);
+    window.location.reload();
 
   } catch (error) {
     console.error(error);
@@ -461,6 +464,8 @@ const generateDetailedPreview = async () => {
       html: response.data.detailedPreview
     };
 
+ 
+
     // ✅ SAVE PRICING TEMPORARILY
     setPricingItems(pricing || []);
 
@@ -471,7 +476,15 @@ const generateDetailedPreview = async () => {
     setEditedHtml(newPreview.html);
     console.log(response.data);
     editor?.commands.setContent(newPreview.html);
+    //window.location.reload();
   } catch (error) {
+if (
+    error.response?.data?.code === "PROPOSAL_LIMIT_REACHED"
+  ) {
+    setShowUpgradeModal(true);
+    return;
+  }
+
     console.error(error);
   } finally {
     setIsLoadingPreview(false);
@@ -487,10 +500,25 @@ const generateDraftFromPreview = async () => {
   const token = localStorage.getItem("jwtToken");
   const apiKey = localStorage.getItem("apiKey");
 
+  if (missingFields) {
+    setError("");
+    setShowCompleteDetailsModal(true);
+    return;
+  }
+
   if (!overview?.aiProposalPreviewHtml) {
     alert("Please generate a detailed AI preview first.");
     return;
   }
+
+  // Backend draft generation expects pricingItems; if user didn't regenerate the response,
+  // pricingItems will still be empty.
+  // if (!Array.isArray(pricingItems) || pricingItems.length === 0) {
+  //   setError("");
+  //   setShowCompleteDetailsModal(true);
+  //   setError("Save Changes And Click Regenerate Reponse Before Generating Draft");
+  //   return;
+  // }
 
   try {
     const response = await axios.post(
@@ -808,7 +836,7 @@ overview &&
                     <h3 className="text-[14px] font-medium text-slate-400 uppercase tracking-widest mb-2">
                       Budget Range
                     </h3>
-{overview.budgetCurrency} {overview?.budgetRange || 'Not Provided Yet'}
+ {overview?.budgetRange || 'Not Provided Yet'}
                   </div>
 
                   <div>
@@ -976,9 +1004,21 @@ overview &&
 
                                 
 
-                      <button
-                        onClick={overview?.aiProposalPreviewHtml ? generateDraftFromPreview  : generatePreview}
+<button
+                        onClick={() => {
+                          if (overview?.aiProposalPreviewHtml) {
+                            if (missingFields) {
+                              setShowCompleteDetailsModal(true);
+                              setError("Complete Requirement Details Before Generating Draft");
+                              return;
+                            }
+                            generateDraftFromPreview();
+                          } else {
+                            generatePreview();
+                          }
+                        }}
                         disabled={isLoadingPreview}
+
                         className={`bg-blue-600 text-white px-6 py-3 rounded-lg text-sm hover:bg-blue-700 cursor-pointer transition-colors ${isLoadingPreview ? 'opacity-60 cursor-not-allowed' : ''}`}
                         >
                         {isLoadingPreview ? 'Generating Preview...' : overview?.aiProposalPreviewHtml ? 'Generate Proposal Draft' : ' Generate AI Preview'}
@@ -1355,6 +1395,16 @@ className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-
 
 </div>
 )}
+
+<UpgradeLimitModal
+  open={showUpgradeModal}
+  onClose={() => setShowUpgradeModal(false)}
+  usage={{
+    planName: "Free",
+    used: 3,
+    limit: 3,
+  }}
+/>
 
             </div>
           </div>

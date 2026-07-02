@@ -19,7 +19,7 @@ const UserProfileForm = ({ onClose }) => {
   useEffect(() => {
     const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("jwtToken");
       const apiKey = localStorage.getItem("api");
 
       const res = await axios.get(
@@ -49,7 +49,7 @@ const UserProfileForm = ({ onClose }) => {
   e.preventDefault();
 
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("api");
 
     const res = await axios.put(

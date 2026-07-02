@@ -1,10 +1,11 @@
 // DashboardLayout.jsx
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Sidebar from "./Sidebar";
 import TopNavbar from "./TopNavbar";
 import AccountDialogs from "./AccountDialogs";
 import useAuthCheck from "./Hooks/useAuthCheck";
-import {useApiInterceptor}  from "./Hooks/useApiInterceptor";
+import { useApiInterceptor } from "./Hooks/useApiInterceptor";
+import axios from "axios";
 
 export default function DashboardLayout({
   children,
@@ -16,22 +17,56 @@ export default function DashboardLayout({
   toggleSidebar,
   isSidebarOpen,
   dialogProps,
-  userProfile
-
+  userProfile,
 }) {
-  
-   useAuthCheck();
-    useApiInterceptor();
-  
-  // Create userData object from userProfile or construct from available props
-  const userData = userProfile ? {
-    ...userProfile,
-    // Map profilePic to profileImageUrl if needed (different field names)
-    profileImageUrl: userProfile.profileImageUrl || userProfile.profilePic || profileImageUrl,
-  } : {
-    profileImageUrl: profileImageUrl,
-  };
-  
+  useAuthCheck();
+  useApiInterceptor();
+
+  const [profile, setProfile] = useState(userProfile || null);
+
+  useEffect(() => {
+    // If caller already provided a profile, prefer that.
+    if (userProfile) {
+      setProfile(userProfile);
+      return;
+    }
+
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("jwtToken");
+        const apiKey = localStorage.getItem("apiKey");
+        if (!token) return;
+
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/Register/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-API-KEY": apiKey,
+            },
+          }
+        );
+
+        setProfile(res.data);
+      } catch (err) {
+        console.error("DashboardLayout fetchProfile error:", err);
+      }
+    };
+
+    fetchProfile();
+  }, [userProfile]);
+
+  const userData = useMemo(() => {
+    const u = profile || {};
+    return {
+      ...u,
+      profileImageUrl:
+        u.profileImageUrl || u.profilePic || profileImageUrl || undefined,
+      // normalize common names to what Sidebar expects
+      name: u.name || u.firstName || u.email,
+    };
+  }, [profile, profileImageUrl]);
+
   return (
     <div className="h-screen overflow-hidden">
       {/* Top Navbar */}

@@ -93,7 +93,11 @@ export default function useSettingsData() {
       ] = await Promise.all([
         getCountries(),
         getIndustries(),
-        getProfile(token),
+        getProfile(token).catch((error) => {
+          console.error("PROFILE API ERROR:", error);
+          console.error("ERROR RESPONSE:", error.response);
+          return null; // Return null if profile API fails
+        }),
         getOrganization(token, apiKey).catch((error) => {
           console.error("ORGANIZATION API ERROR:", error);
           console.error("ERROR RESPONSE:", error.response);
@@ -118,11 +122,11 @@ export default function useSettingsData() {
       setIndustries(industriesData);
 
       setProfileImageUrl(
-        buildImageUrl(profile.profileImageUrl)
+        buildImageUrl(profile?.profileImageUrl)
       );
 
       setOrgLogoPreview(
-        buildImageUrl(organization.logoUrl)
+        buildImageUrl(organization?.logoUrl)
       );
       
       
@@ -141,11 +145,11 @@ export default function useSettingsData() {
       setForm((prev) => ({
         ...prev,
 
-        firstName: profile.firstName || "",
-        middleName: profile.middleName || "",
-        lastName: profile.lastName || "",
-        email: profile.email || "",
-        countryId: profile.country || "",
+        firstName: profile?.firstName || "",
+        middleName: profile?.middleName || "",
+        lastName: profile?.lastName || "",
+        email: profile?.email || "",
+        countryId: profile?.country || "",
 
         organizationName: organization?.name || "",
         organizationEmail: organization?.email || "",

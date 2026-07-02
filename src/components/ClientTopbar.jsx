@@ -1,11 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, ChevronDown } from "lucide-react";
+
+import { getClient } from "../api/clientApi";
 
 export default function ClientTopbar({ proposal }) {
   const [open, setOpen] = useState(false);
 
-  const clientName = proposal?.clientName || "Client";
-  const company = proposal?.client.companyName || "Your Company";
+  const [client, setClient] = useState(null);
+
+  const clientName = client?.name || "Client";
+const company = client?.companyName || "Your Company";
+const API_BASE_URL = "http://localhost:5078";
+const profileImageUrl = client?.logo
+  ? client.logo.startsWith("http")
+    ? client.logo
+    : `${API_BASE_URL}${client.logo}`
+  : "/default-avatar.png";
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadClient = async () => {
+  try {
+    const data = await getClient();
+    
+
+    if (!cancelled) {
+      setClient(data[0] ?? null);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+    loadClient();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const notifications = [
     {
@@ -96,7 +129,11 @@ export default function ClientTopbar({ proposal }) {
           
           {/* AVATAR */}
           <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-sm font-medium">
-            {clientName.charAt(0)}
+           <img
+  src={profileImageUrl}
+  alt={clientName}
+  className="w-9 h-9 rounded-full object-cover"
+/>
           </div>
 
           {/* NAME */}

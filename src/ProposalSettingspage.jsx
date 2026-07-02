@@ -1,4 +1,4 @@
-import { useState,toast } from "react";
+import { useState, toast } from "react";
 import { Save, Sparkles, ChevronRight, Edit, Eye, EyeOff, Copy, RefreshCw } from "lucide-react";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ import SettingsTabs from "./components/settings/SettingsTabs";
 
 import useSettingsData from "./hooks/useSettingsData";
 import SectionCard from "./components/settings/SectionCard";
+import TopNav from "./components/Layout/TopNav";
 
 export default function ProposalSettingspage() {
   const [activeNav, setActiveNav] = useState("Settings");
@@ -44,6 +45,13 @@ export default function ProposalSettingspage() {
   handleFileChange,
   handleUpload,
 } = useSettingsData();
+
+  const userData = {
+    company: form.organizationName || "Your account",
+    profileImageUrl: profileImageUrl || `${import.meta.env.BASE_URL}/default-avatar.png`,
+    //name: `${form.firstName || ""} ${form.lastName || ""}`.trim() || form.email || "User",
+    email: form.email || "",
+  };
 
   // console.log("ProposalSettingspage FORM:", form);
   // console.log("Organization Name:", form.organizationName);
@@ -217,12 +225,12 @@ export default function ProposalSettingspage() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
-      <Sidebar activeNav={activeNav} setActiveNav={setActiveNav}/>
+      <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} userData={userData}/>
 
       <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
 
         {/* HEADER */}
-        <header className="h-14 bg-white border-b border-slate-100 px-7 flex items-center justify-between flex-shrink-0">
+        <header className="relative h-14 bg-white border-b border-slate-100 px-7 flex items-center justify-between overflow-visible">
 
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <span>Dashboard</span>
@@ -234,7 +242,7 @@ export default function ProposalSettingspage() {
             </span>
           </div>
 
-          
+          <TopNav/>
         </header>
 
         {/* CONTENT */}
