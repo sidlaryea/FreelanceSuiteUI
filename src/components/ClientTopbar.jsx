@@ -4,6 +4,7 @@ import { Bell, ChevronDown } from "lucide-react";
 import { getClient } from "../api/clientApi";
 
 export default function ClientTopbar({ proposal }) {
+
   const [open, setOpen] = useState(false);
 
   const [client, setClient] = useState(null);
@@ -21,19 +22,20 @@ const profileImageUrl = client?.logo
     let cancelled = false;
 
     const loadClient = async () => {
-  try {
-    const data = await getClient();
-    
+      try {
+        // JWT token is already attached inside getClient() using localStorage.
+        const data = await getClient();
 
-    if (!cancelled) {
-      setClient(data[0] ?? null);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
+        if (!cancelled) {
+          setClient(data?.[0] ?? null);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     loadClient();
+
 
     return () => {
       cancelled = true;

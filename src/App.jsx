@@ -18,7 +18,6 @@ import ExpensePage from './Expense';
 import RecurringInvoicePage from './RecurringInvoice';
 import TrackDelivery from './Trackdelivery';
 import SettingsPage from './SettingsPage';
-
 import TaxPage from './taxpage';
 import AuditPage from './AuditPage';
 import ReportPage from './ReportPage';
@@ -71,14 +70,6 @@ function App() {
         <Route path="/preview/:draftId" element={<InternalPreviewPage />} />
         <Route path="/clientspage" element={<ClientsPage />} />
         
-
-
-
-
-
-
-
-
           <Route path="/invoicedashboard" element={<InvoiceDashboardPage />} /> {/* Redirect to Dashboard for /invoicedashboard */}
           <Route path="/create-invoice" element={<CreateInvoice />} /> {/* Redirect all other paths to Home */}
           <Route path="/DashboardLayout" element={<DashboardLayout />} />
@@ -100,7 +91,6 @@ function App() {
           <Route path="/billing" element={<Billing />} />
           <Route path="/Notifications" element={<NotificationsPage />} />
           <Route path="/OnboardPage" element={<OnboardPage />} /> {/* Redirect all other paths to Home */}
-
           <Route path="/ProjectOverviewPage" element={<ProjectOverviewPage />} /> {/* Redirect all other paths to Home */}
           <Route path="/ProjectOverviewPreviewPage/:id" element={<ProjectOverviewPreviewPage />} />
           <Route path="/ProposalDraftPage" element={<ProposalDraftPage />} />
@@ -110,8 +100,6 @@ function App() {
           <Route path="/client/proposal/:token" element={<ClientProposalPage />} />
           <Route path="/client/payment/:token" element={<ClientPaymentPage />} />
           <Route path="/client/project/:token" element={<ClientProjectPage />} />
-          
-
           <Route path="*" element={<Home />} /> {/* Redirect all other paths to Home */}
 
 

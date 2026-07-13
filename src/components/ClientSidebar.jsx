@@ -40,7 +40,7 @@ export default function ClientSidebar({ proposal }) {
           icon: LayoutDashboard,
           
           path: `/client/project/${token}`,
-          locked: true,
+          //locked: true,
         },
       ],
     },

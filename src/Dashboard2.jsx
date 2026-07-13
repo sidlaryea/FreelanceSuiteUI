@@ -20,18 +20,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [selectedProposal, setSelectedProposal] = useState(null);
-  const [ setAnalysisLoading] = useState(false);
-  
-
-
-
-
-  
-  
-
-
-
-  
+  const [analysisLoading, setAnalysisLoading] = useState(false);
   
 
   // Auth check
