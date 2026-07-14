@@ -10,7 +10,7 @@ import {
   getbillingInfo,
 } from "../services/SettingsService";
 
-import { buildImageUrl } from "../utils/settingsHelpers";
+import { buildImageUrl } from "../Utils/SettingsHelpers";
 
 export default function useSettingsData() {
   const [countries, setCountries] = useState([]);
