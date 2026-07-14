@@ -6,7 +6,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/
 
 import Sidebar from "./components/Sidebar";
 
-import SettingsTabs from "./components/settings/SettingsTabs";
+
 
 import useSettingsData from "./hooks/useSettingsData";
 import SectionCard from "./components/settings/SectionCard";
