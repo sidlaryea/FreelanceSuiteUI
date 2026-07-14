@@ -58,7 +58,7 @@ function App() {
   return (
     
       <ToastProvider>
-        <Router basename="/FreelanceLandingPage">
+        <Router>
           <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Register />} />
