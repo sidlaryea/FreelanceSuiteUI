@@ -2,7 +2,7 @@ import { useState, useEffect, React } from "react";
 import axios from "axios";
 import DashboardLayout from "./components/DashboardLayout";
 import { jwtDecode } from "jwt-decode";
-import { PaystackButton } from "react-paystack";
+//import { PaystackButton } from "react-paystack";
 import { ensurePaystack } from "./Utils/ensurePaystack";
 import ReceiptViewer from "./components/Ui/ReceiptViewer";
 import { formatNumber } from "./Utils/formatNumber";
