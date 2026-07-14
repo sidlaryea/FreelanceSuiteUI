@@ -9,7 +9,7 @@ import Sidebar from "./components/Sidebar";
 
 
 import useSettingsData from "./hooks/useSettingsData";
-import SectionCard from "./components/settings/SectionCard";
+import SectionCard from "./components/Settings/SectionCard";
 import TopNav from "./components/Layout/TopNav";
 
 export default function ProposalSettingspage() {
