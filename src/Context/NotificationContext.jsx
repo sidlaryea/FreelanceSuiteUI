@@ -122,9 +122,9 @@ export const NotificationProvider = ({ children }) => {
     };
 
   const unreadNotifications =
-    notifications.filter(
-      (x) => !x.isRead
-    ).length;
+    (Array.isArray(notifications) ? notifications : [])
+      .filter((x) => !x.isRead).length;
+
 
   useEffect(() => {
     fetchNotifications();
