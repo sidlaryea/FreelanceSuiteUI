@@ -8,7 +8,7 @@ import {
   getProfile,
   getPaystackSettings,
   getbillingInfo,
-} from "../services/settingsService";
+} from "../services/SettingsService";
 
 import { buildImageUrl } from "../utils/settingsHelpers";
 
