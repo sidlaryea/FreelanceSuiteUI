@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import {Toaster} from 'react-hot-toast';
-import {NotificationProvider} from "./context/NotificationContext";
+import {NotificationProvider} from "./Context/NotificationContext";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 
 
