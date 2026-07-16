@@ -121,7 +121,7 @@ export default function ProposalPreviewModal({
               Download
             </button>
             <button
-              onClick={() => window.open(`${window.location.origin}/FreelanceLandingPage/preview/${draftId}`, "_blank")}
+              onClick={() => window.open(`${window.location.origin}/preview/${draftId}`, "_blank")}
               className="text-sm text-blue-600 hover:underline cursor-pointer flex items-center gap-1"
             >
               <ArrowsPointingOutIcon className="w-5 h-5" />
