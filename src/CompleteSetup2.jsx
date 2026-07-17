@@ -9,7 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import "./assets/onboard.css";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import {API_BASE_Invoice,API_BASE_Proposals} from "./config/api"
+import {API_BASE_Invoice,API_BASE_Proposal} from "./config/api"
 
 // ─── SVG icons ────────────────────────────────────────────────────────────────
 const CheckIco = () => (
