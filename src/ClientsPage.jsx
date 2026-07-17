@@ -4,7 +4,7 @@ import axios from "axios";
 import { getCrmClients, getClientRecommendations,getDashboardSummary } from "./services/clientService";
 import AddClientModal from "./components/AddClientModal";
 import ImportClientsModal from "./components/ImportClientsModal";
-import { API_BASE_Proposal,API_BASE_Invoice } from "./config/api";
+//import { API_BASE_Proposal,API_BASE_Invoice } from "./config/api";
 import {
 
   Search,
