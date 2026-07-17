@@ -7,8 +7,9 @@ export default function SettingsTabs({
   return (
     <div className="sticky top-0 z-20 bg-slate-50/95 backdrop-blur mb-8 border-b border-slate-200 overflow-x-auto">
       <div className="flex items-center gap-2 min-w-max pb-4">
-        {settingsTabs.map((tab) => {
+        {(Array.isArray(settingsTabs) ? settingsTabs : []).map((tab) => {
           const Icon = tab.icon;
+
 
           return (
             <button
