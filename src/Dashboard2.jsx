@@ -54,7 +54,7 @@ export default function Dashboard() {
       
       try {
         const response = await axios.get(
-          `${API_BASE_Proposal}/api/Register/profile`,
+          `${API_BASE_Invoice}/api/Register/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
