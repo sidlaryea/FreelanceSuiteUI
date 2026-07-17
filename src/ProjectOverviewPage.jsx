@@ -70,7 +70,7 @@ export default function ProjectOverviewsPage() {
   const apiKey = localStorage.getItem("apiKey");
     try {
       const response = await axios.get(
-        `${API_BASE_Invoice}/Proposal/api/ProjectOverview/byUser`,
+        `${API_BASE_Proposal}/api/ProjectOverview/byUser`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -177,7 +177,7 @@ export default function ProjectOverviewsPage() {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
     try {
-      const response = await axios.get(`${API_BASE_Invoice}/proposal/api/Client/user/`, {
+      const response = await axios.get(`${API_BASE_Proposal}/api/Client/user/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey

@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_Invoice,API_BASE_Proposal } from "../config/api";
 
-const API_URL = import.meta.env.VITE_API_URL;
+
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -9,7 +10,7 @@ const getAuthHeaders = () => ({
 
 export const getCrmClients = async () => {
   const response = await axios.get(
-    `${API_URL}/Proposal/api/Client/api/internal/clients/crm`,
+    `${API_BASE_Invoice}/Proposal/api/Client/api/internal/clients/crm`,
     {
       headers: getAuthHeaders(),
     }
@@ -20,7 +21,7 @@ export const getCrmClients = async () => {
 
 export const getClientRecommendations = async (clientId) => {
   const response = await axios.get(
-    `${API_URL}/Proposal/api/Client/api/internal/client-recommendations/${clientId}`,
+    `${API_BASE_Invoice}/Proposal/api/Client/api/internal/client-recommendations/${clientId}`,
     {
       headers: getAuthHeaders(),
     }
@@ -31,7 +32,7 @@ export const getClientRecommendations = async (clientId) => {
 
 export const getDashboardSummary = async (clientId) => {
   const response = await axios.get(
-    `${API_URL}/api/Invoice/summary/${clientId}`,
+    `${API_BASE_Invoice}/api/Invoice/summary/${clientId}`,
     {
       headers: getAuthHeaders(),
     }
@@ -42,7 +43,7 @@ export const getDashboardSummary = async (clientId) => {
 
 export const loadDashboardSummary = async () => {
   const response = await axios.get(
-    `${API_URL}/api/Invoice/summary/`,
+    `${API_BASE_Invoice}/api/Invoice/summary/`,
     {
       headers: getAuthHeaders(),
     }
@@ -53,7 +54,7 @@ export const loadDashboardSummary = async () => {
 
 export const loadSubscriptionSummary = async () => {
   const response = await axios.get(
-    `${API_URL}/api/Subscription/usage`,
+    `${API_BASE_Invoice}/api/Subscription/usage`,
     {
       headers: getAuthHeaders(),
     }
@@ -64,7 +65,7 @@ export const loadSubscriptionSummary = async () => {
 
 export const loadInvoiceList = async () => {
   const response = await axios.get(
-    `${API_URL}/api/Invoice/invoice-list`,
+    `${API_BASE_Invoice}/api/Invoice/invoice-list`,
     {
       headers: getAuthHeaders(),
     }

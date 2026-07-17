@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import TopNav from "./components/Layout/TopNav";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 const Icon = {
   dashboard: <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
@@ -101,7 +102,7 @@ export default function ProposalListPage() {
     const apiKey = localStorage.getItem("apiKey");
     try {
       const response = await axios.get(
-        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/user/`,
+        `${API_BASE_Proposal}/api/ProposalDraft/user/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -127,7 +128,7 @@ console.error("Failed to load proposal drafts", error);
     return async () => {
       try {
         const response = await axios.post(
-          `${API_BASE_Invoice}/Proposal/api/Proposal/generate-from-draft/${draftId}`,
+          `${API_BASE_Proposal}/api/generate-from-draft/${draftId}`,
           {},
           {
             headers: {

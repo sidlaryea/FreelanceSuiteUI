@@ -11,7 +11,7 @@ import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import Sidebar from "./components/Sidebar";
 import UpgradeLimitModal from "./components/Ui/UpgradeLimitModal";
-import { API_BASE_Invoice } from "./config/api";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 
 // Icons (same as Dashboard2)
@@ -107,7 +107,7 @@ const [showUpgradeModal,setShowUpgradeModal] = useState(false);
       const apiKey = localStorage.getItem("apiKey");
 
       const response = await axios.get(
-        `${API_BASE_Invoice}/proposal/api/ProposalAi/requirement/${requirementId}`,
+        `${API_BASE_Proposal}/api/ProposalAi/requirement/${requirementId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ const [showUpgradeModal,setShowUpgradeModal] = useState(false);
       const apiKey = localStorage.getItem("apiKey");
       
       const response = await axios.get(
-        `${API_BASE_Invoice}/Proposal/api/ProjectOverview/${id}`,
+        `${API_BASE_Proposal}/api/ProjectOverview/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -276,10 +276,11 @@ useEffect(() => {
         keyFeaturesSummary: form.keyFeaturesSummary
       };
 
+
       console.log("Updating with payload:", payload);
 
       await axios.put(
-        `${API_BASE_Invoice}/Proposal/api/ProjectOverview/${id}`,
+        `${API_BASE_Proposal}/api/ProjectOverview/${id}`,
         payload,
         {
           headers: {
@@ -361,7 +362,7 @@ useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
     try {
-      const response = await axios.get(`${API_BASE_Invoice}/proposal/api/Client/user/`, {
+      const response = await axios.get(`${API_BASE_Proposal}/api/Client/user/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -405,7 +406,7 @@ useEffect(() => {
 
   try {
     const response = await axios.post(
-      `${API_BASE_Invoice}/proposal/api/ProposalAi/generate-preview/${requirementId}`,
+      `${API_BASE_Proposal}/api/ProposalAi/generate-preview/${requirementId}`,
       {},
       {
         headers: {
@@ -449,7 +450,7 @@ const generateDetailedPreview = async () => {
   setIsLoadingPreview(true);
   try {
     const response = await axios.post(
-      `${API_BASE_Invoice}/proposal/api/ProposalAi/generate-detailed-preview/${requirementId}`,
+      `${API_BASE_Proposal}/api/ProposalAi/generate-detailed-preview/${requirementId}`,
       
       {},
       {
@@ -523,7 +524,7 @@ const generateDraftFromPreview = async () => {
 
   try {
     const response = await axios.post(
-      `${API_BASE_Invoice}/Proposal/api/ProposalDraft/generate-from-overview/${overview.id}`,
+      `${API_BASE_Proposal}/api/ProposalDraft/generate-from-overview/${overview.id}`,
       {
         pricingItems: pricingItems // send current pricing if any - backend will decide how to use it
       },
@@ -590,7 +591,7 @@ const saveEditedPreview = async () => {
     const htmlToSave = editor?.getHTML() || editedHtml;
 
     await axios.put(
-      `${API_BASE_Invoice}/proposal/api/ProposalAi/update-preview/${selectedPreviewId}`,
+      `${API_BASE_Proposal}/api/ProposalAi/update-preview/${selectedPreviewId}`,
       { html: htmlToSave },
       {
         headers: {

@@ -151,7 +151,7 @@ useEffect(() => {
 
     try {
       await axios.put(
-        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${id}`,
+        `${API_BASE_Proposal}/api/ProposalDraft/${id}`,
         {
           executiveSummary: executiveSummary,
           contentHtml: contentHtml,
@@ -190,7 +190,7 @@ const config = funnelStageConfig[stageKey];
 
     try {
       const response = await axios.post(
-        `${API_BASE_Invoice}/Proposal/api/Proposal/generate-from-draft/${id}`,
+        `${API_BASE_Proposal}/api/Proposal/generate-from-draft/${id}`,
         
         {},
         {
