@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bell, ChevronDown } from "lucide-react";
 import { API_BASE_Proposal } from "../config/api";
-
 import { getClient } from "../api/clientApi";
-inport ()
 
 export default function ClientTopbar({ proposal }) {
 
@@ -17,7 +15,7 @@ const company = client?.companyName || "Your Company";
 const profileImageUrl = client?.logo
   ? client.logo.startsWith("http")
     ? client.logo
-    : `${API_BASE_URL}${client.logo}`
+    : `${API_BASE_Proposal}${client.logo}`
   : "/default-avatar.png";
 
   useEffect(() => {
