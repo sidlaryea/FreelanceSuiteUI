@@ -361,7 +361,8 @@ export default function ProposalSettingspage() {
             >
               <option value="">Select a country</option>
 
-              {countries.map((country) => (
+              {Array.isArray(countries) &&
+  countries.map((country) => (
                 <option key={country.id} value={country.id}>
                   {getFlagEmoji(country.code)} {country.name}
                 </option>
@@ -463,7 +464,8 @@ export default function ProposalSettingspage() {
                         className="w-full h-12 rounded-xl border border-slate-300 px-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                       <option value="">Select an Industry</option>
-                      {industries.map((industry) => (
+                      {Array.isArray(industries) &&
+  industries.map((industry)=> (
                       <option key={industry.id} value={industry.id}>
                     {industry.name}
                     </option>
