@@ -10,8 +10,10 @@ import Sidebar from "./components/Sidebar";
 
 import useSettingsData from "./hooks/useSettingsData";
 import SectionCard from "./components/Settings/SectionCard";
+import SettingsTabs from "./components/Settings/SettingsTabs";
 import TopNav from "./components/Layout/TopNav";
 import { API_BASE_Proposal,API_BASE_Invoice } from "./config/api";
+
 
 export default function ProposalSettingspage() {
   const [activeNav, setActiveNav] = useState("Settings");
