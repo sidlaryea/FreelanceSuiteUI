@@ -2,6 +2,7 @@ import Sidebar from "./components/Sidebar";
 import axios from "axios";
 import { useNotifications } from "./Context/NotificationContext";
 import TopNav from "./components/Layout/TopNav";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 import { useMemo, useState, useEffect } from "react";
 import {
@@ -136,7 +137,7 @@ const fetchDashboard = async () => {
   const apiKey = localStorage.getItem("apiKey");
 
   const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/Proposal/api/Notifications/Overview-dashboard`,
+    `${API_BASE_Invoice}/Proposal/api/Notifications/Overview-dashboard`,
     {
       headers: {
           Authorization: `Bearer ${token}`,
@@ -181,7 +182,7 @@ const token = localStorage.getItem("jwtToken");
 const apiKey = localStorage.getItem("apiKey");
 
     const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/Proposal/api/Notifications/Inbox-notifications`,
+      `${API_BASE_Invoice}/Proposal/api/Notifications/Inbox-notifications`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -207,7 +208,7 @@ const fetchCategoryNotifications = async (category = null) => {
     const apiKey = localStorage.getItem("apiKey");
 
     let url =
-      `${import.meta.env.VITE_API_URL}/Proposal/api/Notifications/Inbox-notifications`;
+      `${API_BASE_Invoice}/Proposal/api/Notifications/Inbox-notifications`;
 
     if (category !== null) {
       url += `?category=${category}`;
@@ -234,7 +235,7 @@ const loadSettings = async () => {
   const apiKey = localStorage.getItem("apiKey");
 
   const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/Proposal/api/Notifications/settings`,
+    `${API_BASE_Invoice}/Proposal/api/Notifications/settings`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -250,7 +251,7 @@ const fetchUserProfile = async () => {
   try {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
+    const response = await axios.get(`${API_BASE_Invoice}/api/Register/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-API-KEY": apiKey,
@@ -268,7 +269,7 @@ const saveSettings = async () => {
 
   try {
     await axios.put(
-      `${import.meta.env.VITE_API_URL}/Proposal/api/Notifications/settings`,
+      `${API_BASE_Invoice}/Proposal/api/Notifications/settings`,
       notificationSettings,
       {
         headers: {
