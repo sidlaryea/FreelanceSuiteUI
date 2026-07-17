@@ -169,7 +169,7 @@ const apiKey = localStorage.getItem("apiKey");
 
 const getClientActivities = useCallback(async (clientId) => {
   const response = await fetch(
-    `${API_BASE_Invoice}/Proposal/api/Client/api/internal/client-activities/${clientId}`,
+    `${API_BASE_Proposal}/api/Client/api/internal/client-activities/${clientId}`,
   
   
   {

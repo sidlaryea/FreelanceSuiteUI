@@ -137,7 +137,7 @@ const fetchDashboard = async () => {
   const apiKey = localStorage.getItem("apiKey");
 
   const response = await axios.get(
-    `${API_BASE_Invoice}/Proposal/api/Notifications/Overview-dashboard`,
+    `${API_BASE_Proposal}/api/Notifications/Overview-dashboard`,
     {
       headers: {
           Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ const token = localStorage.getItem("jwtToken");
 const apiKey = localStorage.getItem("apiKey");
 
     const response = await axios.get(
-      `${API_BASE_Invoice}/Proposal/api/Notifications/Inbox-notifications`,
+      `${API_BASE_Proposal}/api/Notifications/Inbox-notifications`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -208,7 +208,7 @@ const fetchCategoryNotifications = async (category = null) => {
     const apiKey = localStorage.getItem("apiKey");
 
     let url =
-      `${API_BASE_Invoice}/Proposal/api/Notifications/Inbox-notifications`;
+      `${API_BASE_Proposal}/api/Notifications/Inbox-notifications`;
 
     if (category !== null) {
       url += `?category=${category}`;
@@ -235,7 +235,7 @@ const loadSettings = async () => {
   const apiKey = localStorage.getItem("apiKey");
 
   const response = await axios.get(
-    `${API_BASE_Invoice}/Proposal/api/Notifications/settings`,
+    `${API_BASE_Proposal}/api/Notifications/settings`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -269,7 +269,7 @@ const saveSettings = async () => {
 
   try {
     await axios.put(
-      `${API_BASE_Invoice}/Proposal/api/Notifications/settings`,
+      `${API_BASE_Proposal}/api/Notifications/settings`,
       notificationSettings,
       {
         headers: {

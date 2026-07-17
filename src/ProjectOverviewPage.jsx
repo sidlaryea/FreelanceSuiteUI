@@ -5,7 +5,7 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import CreateProjectModal from "./components/CreateProjectModal";
 import TopNav from "./components/Layout/TopNav";
-import { API_BASE_Invoice } from "./config/api";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 
 export default function ProjectOverviewsPage() {
