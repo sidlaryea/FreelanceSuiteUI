@@ -1,6 +1,6 @@
-# TODO
-
-- [ ] Refactor `src/Dashboard2.jsx` to mirror `src/ClientsPage.jsx` layout (header, KPI cards, client list, right sidebar)
-- [ ] Update `Dashboard2.jsx` data layer to load CRM clients using the same approach as `ClientsPage.jsx` (`getCrmClients` / client normalization)
-- [ ] Remove/rework Dashboard2-specific charts/table/drawer UI so only ClientsPage UI remains
-- [ ] Validate build/dev run: `npm run dev`
+- [x] Fix and compile `src/components/ClientTopbar.jsx` (broken `inport ()`, missing/incorrect imports, undefined `API_BASE_URL`).
+- [x] Clean up / correct `src/components/ClientTopbar.jsx` to correctly call `getClient()` and render client avatar/name.
+- [ ] Validate `ClientPaymentPage` logic for payment initialization + verification args + custom amount handling; make minimal safe fixes only if compile/runtime issues found.
+- [ ] Validate `ClientProposalPage` status panel data guards (`amountPaid`, `balanceDue`, `currency`) and ensure consistent navigation.
+- [x] Run `npm run build` and confirm it completes (client topbar fixed; build succeeded).
+- [x] Update completion summary.
