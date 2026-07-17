@@ -8,7 +8,7 @@ export const getDashboardHome = async () => {
   const apiKey = localStorage.getItem("apiKey");
 
   const response = await axios.get(
-    `${API_BASE_URL_proposal}/Dashboard/home`,
+    `https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/api/Dashboard/home`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
