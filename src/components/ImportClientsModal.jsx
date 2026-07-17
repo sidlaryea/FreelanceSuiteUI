@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { Download, UploadCloud, X } from "lucide-react";
 import axios from "axios";
+import { API_BASE_Proposal } from "../config/api";
 
-const API_URL = "http://localhost:5078";
+
 
 export default function ImportClientsModal({
   isOpen,
@@ -74,7 +75,7 @@ export default function ImportClientsModal({
       formData.append("file", file);
 
       const res = await axios.post(
-        `${API_URL}/Proposal/api/internal/clients/import`,
+        `${API_BASE_Proposal}/Proposal/api/internal/clients/import`,
         formData,
         {
           headers: {

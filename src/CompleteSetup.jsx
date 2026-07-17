@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import {API_BASE_Invoice} from "./config/api"
 
 export default function CompleteSetup() {
   const [form, setForm] = useState({
@@ -107,7 +108,7 @@ export default function CompleteSetup() {
     };
 
     const projectResponse = await axios.post(
-      "http://localhost:5214/proposal/api/ProjectOverview",
+      `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
       projectPayload,
       {
         headers: {
@@ -121,7 +122,7 @@ export default function CompleteSetup() {
       projectResponse.data.requirementId || projectResponse.data.id;
 
     const previewResponse = await axios.post(
-      `http://localhost:5214/proposal/api/ProposalAi/generate-preview/${newRequirementId}`,
+      `${API_BASE_Invoice}/proposal/api/ProposalAi/generate-preview/${newRequirementId}`,
       {},
       {
         headers: {
@@ -181,7 +182,7 @@ export default function CompleteSetup() {
       };
 
       const clientResponse = await axios.post(
-        "http://localhost:5214/proposal/api/Client",
+        `${API_BASE_Invoice}/proposal/api/Client`,
         clientInfoPayload,
         { headers: { Authorization: `Bearer ${token}`, "X-API-KEY": apiKey } }
       );
@@ -194,7 +195,7 @@ export default function CompleteSetup() {
         logoData.append("file", logo);
 
         await axios.post(
-          `http://localhost:5214/proposal/api/Client/update-logo/${clientId}`,
+          `${API_BASE_Invoice}/proposal/api/Client/update-logo/${clientId}`,
           logoData,
           {
             headers: {
@@ -218,7 +219,7 @@ export default function CompleteSetup() {
       };
 
       await axios.post(
-        "http://localhost:5214/proposal/api/ProjectOverview",
+        `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
         projectPayload,
         { headers: { Authorization: `Bearer ${token}`, "X-API-KEY": apiKey } }
       );
@@ -242,7 +243,7 @@ export default function CompleteSetup() {
         };
 
         await axios.post(
-          "http://localhost:5214/api/PaymentSetup/Save User Payment Setup",
+          `${API_BASE_Invoice}/api/PaymentSetup/Save User Payment Setup`,
           paymentPayload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -259,7 +260,7 @@ export default function CompleteSetup() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5214/api/Industries")
+    axios.get(`${API_BASE_Invoice}/api/Industries`)
       .then((res) => {
         const sortedIndustries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setIndustries(sortedIndustries);
@@ -268,7 +269,7 @@ export default function CompleteSetup() {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:5214/api/Country")
+    axios.get(`${API_BASE_Invoice}/api/Country`)
       .then((res) => {
         const sortedCountries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setCountries(sortedCountries);

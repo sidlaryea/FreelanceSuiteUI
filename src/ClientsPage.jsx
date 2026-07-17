@@ -4,10 +4,7 @@ import axios from "axios";
 import { getCrmClients, getClientRecommendations,getDashboardSummary } from "./services/clientService";
 import AddClientModal from "./components/AddClientModal";
 import ImportClientsModal from "./components/ImportClientsModal";
-
-
-
-
+import { API_BASE_Proposal,API_BASE_Invoice } from "./config/api";
 import {
 
   Search,
@@ -29,6 +26,7 @@ import {
   MoreHorizontal,
   MessageSquare,
 } from "lucide-react";
+import {API_BASE_Invoice,API_BASE_Proposal} from "./config/api"
 
 
 
@@ -104,7 +102,7 @@ const fetchUserData = async () => {
     if (!token) return;
     try {
       
-         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`,
+         const response = await axios.get(`${API_BASE_Invoice}/api/Register/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -171,7 +169,7 @@ const apiKey = localStorage.getItem("apiKey");
 
 const getClientActivities = useCallback(async (clientId) => {
   const response = await fetch(
-    `http://localhost:5214/Proposal/api/Client/api/internal/client-activities/${clientId}`,
+    `${API_BASE_Invoice}/Proposal/api/Client/api/internal/client-activities/${clientId}`,
   
   
   {
@@ -488,7 +486,7 @@ const winRate =
                         <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100">
                               {client.logo ? (
                                 <img
-                                  src={`http://localhost:5078/${client.logo}`}
+                                  src={`${API_BASE_Proposal}/${client.logo}`}
                                   alt={client.name}
                                   className="w-full h-full object-cover"
                                 />

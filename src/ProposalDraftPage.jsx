@@ -101,7 +101,7 @@ export default function ProposalListPage() {
     const apiKey = localStorage.getItem("apiKey");
     try {
       const response = await axios.get(
-        "http://localhost:5214/Proposal/api/ProposalDraft/user/",
+        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/user/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -127,7 +127,7 @@ console.error("Failed to load proposal drafts", error);
     return async () => {
       try {
         const response = await axios.post(
-          `http://localhost:5214/Proposal/api/Proposal/generate-from-draft/${draftId}`,
+          `${API_BASE_Invoice}/Proposal/api/Proposal/generate-from-draft/${draftId}`,
           {},
           {
             headers: {
@@ -151,7 +151,7 @@ console.error("Failed to load proposal drafts", error);
     if (!token) return;
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register/profile",
+        `${API_BASE_Invoice}/api/Register/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -348,7 +348,7 @@ console.error("Failed to load proposal drafts", error);
                         <td className="p-4">
                           {item.client?.logo ? (
                             <img
-                              src={`http://localhost:5078${item.client.logo}`}
+                              src={`${API_BASE_Proposal}${item.client.logo}`}
                               className="w-12 h-12 object-contain rounded-2xl bg-slate-100"
                               alt={item.client?.name || "Client logo"}
                             />

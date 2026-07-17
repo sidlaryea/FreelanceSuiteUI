@@ -12,7 +12,7 @@ const publicHeaders = () => {
 };
 
 export const getPublicProposal = async (token) => {
-  const response = await axios.get(`http://localhost:5214/Proposal/p/${token}`, {
+  const response = await axios.get(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/Proposal/p/${token}`, {
     headers: publicHeaders(),
   });
   return response.data;
@@ -26,14 +26,14 @@ export const getPublicProposalByPublicId = async (publicId) => {
 };
 
 export const acceptPublicProposal = async (token, data = {}) => {
-  const response = await axios.post(`http://localhost:5214/Proposal/p/${token}/accept`, data, {
+  const response = await axios.post(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/Proposal/p/${token}/accept`, data, {
     headers: publicHeaders(),
   });
   return response.data;
 };
 
 export const rejectPublicProposal = async (token) => {
-  const response = await axios.post(`http://localhost:5214/Proposal/p/${token}/reject`, {}, {
+  const response = await axios.post(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/Proposal/p/${token}/reject`, {}, {
     headers: publicHeaders(),
   });
   return response.data;

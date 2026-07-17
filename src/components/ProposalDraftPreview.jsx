@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/axiosClient";
 import Sidebar from "./Sidebar";
+import { API_BASE_Invoice } from "../config/api";
 
 export default function ProposalDraftPreview() {
   const { draftId } = useParams();
@@ -18,7 +19,7 @@ export default function ProposalDraftPreview() {
 
     try {
       const res = await axios.get(
-        `http://localhost:5214/Proposal/api/ProposalDraft/${draftId}`,
+        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${draftId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -5,6 +5,7 @@ import { Download, Plus, Filter, ChevronRight, TrendingUp } from "lucide-react";
 
 import {loadDashboardSummary as fetchDashboardSummary,loadInvoiceList,loadSubscriptionSummary as fetchSubscriptionSummary} from  "./services/clientService";
 import TopNav from "./components/Layout/TopNav";
+import {API_BASE_Invoice,API_BASE_Proposal} from "./config/api"
 
 
 
@@ -81,7 +82,7 @@ const loadUserProfile = async () => {
   try {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
+    const response = await axios.get(`${API_BASE_Invoice}/api/Register/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-API-KEY": apiKey,

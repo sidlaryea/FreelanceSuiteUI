@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import ClientLayout from "./ClientLayout";
 import { getPublicProposal } from "./api/proposalApi";
 import {CreditCard,Landmark,Wallet,Bitcoin,BadgeDollarSign,FileText,ShieldCheck,Download,ChevronRight,CheckCircle2,Sparkles,Receipt,Clock3,CircleDollarSign,Eye} from "lucide-react";
+import {API_BASE_Invoice,API_BASE_Proposal} from "./config/api"
 
 export default function ClientPaymentPage() {
   const { token } = useParams();
@@ -42,7 +43,7 @@ const remaining = proposal?.balanceDue || 0; // UI only
     try {
       setInitializingPayment(true);
       const initRes = await fetch(
-        "http://localhost:5214/api/payment/initialize-public",
+        `${API_BASE_Invoice}/api/payment/initialize-public`,
         {
           method: "POST",
           headers: {
@@ -86,7 +87,7 @@ const handlePay = async () => {
   const verifyPayment = async (reference,
   invoiceId) => {
     const res = await fetch(
-      "http://localhost:5214/api/payment/verify-public",
+      `${API_BASE_Invoice}/api/payment/verify-public`,
       {
         method: "POST",
         headers: {

@@ -7,6 +7,7 @@ import ProposalCoverPage from "./components/CoverPage";
 import ProposalPreviewModal from "./components/ProposalPreviewModal";
 import ProposalMetaSection from "./components/ProposalMetaSection";
 import  Icon  from "./ProposalDraftEditorPage"; // Reuse icons
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 
 export default function FinalProposalPage() {
@@ -32,7 +33,7 @@ export default function FinalProposalPage() {
 
     try {
       const response = await axios.get(
-        `http://localhost:5214/Proposal/api/proposal/${id}`, // Adjust endpoint as needed
+        `${API_BASE_Invoice}/Proposal/api/proposal/${id}`, // Adjust endpoint as needed
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ export default function FinalProposalPage() {
     const apiKey = localStorage.getItem("apiKey");
 
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
+      const response = await axios.get(`${API_BASE_Invoice}/api/Register/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -75,7 +76,7 @@ export default function FinalProposalPage() {
       return;
     }
 
-    const baseUrl = import.meta.env.BASE_URL || '';
+    const baseUrl = "https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net";
     const normalizedBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const url = `${window.location.origin}${normalizedBase}/proposal/${proposal.publicToken}`;
     const button = event?.currentTarget;
@@ -103,7 +104,7 @@ export default function FinalProposalPage() {
 
     try {
       await axios.post(
-        `http://localhost:5214/Proposal/api/Proposal/${id}/send`,
+        `${API_BASE_Invoice}/Proposal/api/Proposal/${id}/send`,
         
         {},
         

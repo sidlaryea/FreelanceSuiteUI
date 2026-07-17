@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { useApiInterceptor } from "./components/Hooks/useApiInterceptor";
-import {API_BASE} from "./config/api"
+import {API_BASE_Invoice} from "./config/api"
 
 export default function Login() {
   const [email, setemail] = useState("");
@@ -20,7 +20,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        `${API_BASE}/api/Login/login`,
+        `${API_BASE_Invoice}/api/Login/login`,
         {
           email,
           password,
@@ -45,7 +45,7 @@ export default function Login() {
         localStorage.setItem("jwtToken", token);
 
         // Fetch API key info
-        const apiRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/ApiKey`, {
+        const apiRes = await axios.get(`${API_BASE_Invoice}/api/ApiKey`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export default function Login() {
       setError("");
 
       const API_URL = import.meta.env.VITE_API_URL;
-      const result = await axios.post(`${API_URL}/api/Login/google-login`, {
+      const result = await axios.post(`${API_BASE_Invoice}/api/Login/google-login`, {
         idToken: credentialResponse.credential,
       });
 

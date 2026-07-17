@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Plus, Edit2, Trash2, Check, X, Star } from "lucide-react";
 import DashboardLayout from "./components/DashboardLayout";
+
 export default function TaxRatesPage() {
   const [selectedCurrency, setSelectedCurrency] = useState(null);
   const [showModal, setShowModal] = useState(false);

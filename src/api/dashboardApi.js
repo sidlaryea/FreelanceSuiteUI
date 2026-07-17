@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5214/Proposal/api";
+const API_BASE_URL = `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/Proposal/api`;
 
 export const getDashboardHome = async () => {
   const token = localStorage.getItem("jwtToken");

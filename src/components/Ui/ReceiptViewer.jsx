@@ -3,6 +3,7 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { API_BASE_Invoice } from "../../config/api";
 
 
 export default function ReceiptViewer({ txnId, onClose }) {
@@ -21,7 +22,7 @@ export default function ReceiptViewer({ txnId, onClose }) {
         }
 
         const response = await fetch(
-          `http://localhost:5214/api/ExportPdf/${txnId}/export-pdf`,
+          `${API_BASE_Invoice}/api/ExportPdf/${txnId}/export-pdf`,
           {
             method: "GET",
             headers: {

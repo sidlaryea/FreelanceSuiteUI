@@ -9,6 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import "./assets/onboard.css";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import {API_BASE_Invoice,API_BASE_Proposals} from "./config/api"
 
 // ─── SVG icons ────────────────────────────────────────────────────────────────
 const CheckIco = () => (
@@ -200,7 +201,7 @@ export default function CompleteSetup() {
   
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/Industries`)
+    axios.get(`${API_BASE_Invoice}/api/Industries`)
       .then((res) => {
         const sortedIndustries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setIndustries(sortedIndustries);
@@ -209,7 +210,7 @@ export default function CompleteSetup() {
   }, []);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/Country`)
+    axios.get(`${API_BASE_Invoice}/api/Country`)
       .then((res) => {
         const sortedCountries = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setCountries(sortedCountries);
@@ -226,7 +227,7 @@ export default function CompleteSetup() {
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
-        const res = await axios.get("http://localhost:5214/api/Currency/GetAllCurrencies");
+        const res = await axios.get(`${API_BASE_Invoice}/api/Currency/GetAllCurrencies`);
         const mapped = (res.data || []).filter(c => c.isActive ?? true).map(c => ({
           id: c.id,
           code: c.currencyCode || c.code,
@@ -279,7 +280,7 @@ if (orgLogoFile && orgId) {
   const logoData = new FormData();
   logoData.append("file", orgLogoFile);
   await axios.post(
-    `${API_URL}/proposal/api/Organization/update-logo/${orgId}`,
+    `${API_BASE_Invoice}/proposal/api/Organization/update-logo/${orgId}`,
 
     logoData,
     {

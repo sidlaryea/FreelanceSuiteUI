@@ -13,6 +13,7 @@ import ProposalScopeSection from "./components/ProposalScopeSection";
 import TimelineSection from "./components/TimelineSection";
 import DeliverableSection from "./components/DeliverableSection";
 import ProposalPreviewModal from "./components/ProposalPreviewModal";
+import { API_BASE_Invoice } from "./config/api";
 
 
 
@@ -89,7 +90,7 @@ const getStatusStyles = (color) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5214/Proposal/api/ProposalDraft/${id}`,
+        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -128,7 +129,7 @@ useEffect(() => {
 
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register/profile",
+        `${API_BASE_Invoice}/api/Register/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -150,7 +151,7 @@ useEffect(() => {
 
     try {
       await axios.put(
-        `http://localhost:5214/Proposal/api/ProposalDraft/${id}`,
+        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${id}`,
         {
           executiveSummary: executiveSummary,
           contentHtml: contentHtml,
@@ -189,7 +190,7 @@ const config = funnelStageConfig[stageKey];
 
     try {
       const response = await axios.post(
-        `http://localhost:5214/Proposal/api/Proposal/generate-from-draft/${id}`,
+        `${API_BASE_Invoice}/Proposal/api/Proposal/generate-from-draft/${id}`,
         
         {},
         {

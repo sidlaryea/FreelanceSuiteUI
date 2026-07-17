@@ -1,11 +1,12 @@
 import * as signalR from "@microsoft/signalr";
+import { API_BASE_Invoice } from "../config/api";
 
 let connection = null;
 
 export const startSignalRConnection = async () => {
 
   connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5214/proposalHub")
+    .withUrl(`${API_BASE_Invoice}/proposalHub`)
     .withAutomaticReconnect()
     .build();
 

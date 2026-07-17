@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/axiosClient";
+import { API_BASE_Invoice } from "../config/api";
 
 export default function InternalPreviewPage() {
   const { draftId } = useParams();
@@ -17,7 +18,7 @@ export default function InternalPreviewPage() {
 
   try {
     const res = await axios.get(
-      `http://localhost:5214/Proposal/api/ProposalDraft/${draftId}`,
+      `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${draftId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

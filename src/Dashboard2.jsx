@@ -10,6 +10,7 @@ import NextActionCard from "./components/Dashboard/NextActionCard"
 import AiInsightsCard from "./components/Dashboard/AiInsightsCard"; 
 import AiRecommendations from "./components/Dashboard/AiRecommendations"
 import ScoreFactor from "./components/Dashboard/ScoreFactor";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
  
 
@@ -53,7 +54,7 @@ export default function Dashboard() {
       
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/Register/profile`,
+          `${API_BASE_Invoice}/api/Register/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -134,7 +135,7 @@ const getScoreBadge = (score) => {
     const apiKey = localStorage.getItem("apiKey");
 
     const response = await axios.post(
-      `http://localhost:5214/Proposal/api/Proposal/${proposal.proposalId}`,
+      `${API_BASE_Invoice}Proposal/api/Proposal/${proposal.proposalId}`,
       {},
       {
         headers: {

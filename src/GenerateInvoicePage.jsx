@@ -6,6 +6,7 @@ import AutocompleteSearch from './components/AutocompleteSearch';
 import { useApiInterceptor } from "./components/Hooks/useApiInterceptor";
 import SuccessModal from "./components/Ui/SuccessModal";
 import { toast } from "react-hot-toast";
+import { API_BASE_Invoice } from "./config/api";
 
 
 export default function GenerateInvoicePage() {
@@ -27,7 +28,7 @@ const fetchInvoices = async () => {
   try {
     const apiKey = localStorage.getItem("apiKey"); // Include this if your API requires auth
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/Invoice/GetInvoicesByUserId`, {
+    const res = await fetch(`${API_BASE_Invoice}/api/Invoice/GetInvoicesByUserId`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
@@ -122,7 +123,7 @@ const getFlagEmoji = (code) => {
     formData.append("imageFile", selectedFile);
 
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/Register/update-profile-image`, formData, {
+      await axios.put(`${API_BASE_Invoice}/api/Register/update-profile-image`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
@@ -153,7 +154,7 @@ if (!token) {
 }
 
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/Register/update-password`, {
+      await axios.put(`${API_BASE_Invoice}/api/Register/update-password`, {
         currentPassword,
         newPassword,
         confirmPassword: newPassword,
@@ -174,13 +175,13 @@ if (!token) {
     const token = localStorage.getItem("jwtToken");
     
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/Register/profile`, {
+      const res = await axios.get(`${API_BASE_Invoice}/api/Register/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       
       const { profileImageUrl } = res.data;
-      setProfileImageUrl(`${import.meta.env.VITE_API_URL}/${profileImageUrl.replace(/\\/g, '/')}`);
+      setProfileImageUrl(`${API_BASE_Invoice}/${profileImageUrl.replace(/\\/g, '/')}`);
     } catch (err) {
       console.error("Failed to fetch user profile", err);
     }
@@ -193,7 +194,7 @@ if (!token) {
       if (!country) return; // no country stored
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/Tax/by-country/${country}`);
+      const res = await fetch(`${API_BASE_Invoice}/api/Tax/by-country/${country}`);
       const data = await res.json();
       console.log("Fetched taxes on load:", data);
       setTaxComponents(data);
@@ -213,7 +214,7 @@ if (!token) {
   
   const handleSignOut = () => {
     localStorage.clear();
-    window.location.replace("/InvoiceAPI_LandingPage/login");
+    window.location.replace("/login");
   };
 
   
@@ -225,7 +226,7 @@ const fetchProducts = async (query) => {
   if (!query) return [];
 
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/Product/search?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`${API_BASE_Invoice}/api/Product/search?query=${encodeURIComponent(query)}`);
     return await res.json(); // expected: array of { id, name, price, description }
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -275,7 +276,7 @@ console.log("selectedInvoice", selectedInvoice);
       status: formData.status,
     };
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/Invoice`, {
+    const response = await fetch(`${API_BASE_Invoice}/api/Invoice`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -418,7 +419,7 @@ const handleDownloadPDF = async (id) => {
       return;
     }
 
-    const response = await fetch(`http://localhost:5214/api/ExportPdf/${id}/export-pdf`, {
+    const response = await fetch(`${API_BASE_Invoice}/api/ExportPdf/${id}/export-pdf`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -459,7 +460,7 @@ const handleSendInvoiceEmail = async (invoiceId) => {
     const token = localStorage.getItem("jwtToken");
     
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/Email/${invoiceId}/send-email`, // Adjust to your API route
+      `${API_BASE_Invoice}/api/Email/${invoiceId}/send-email`, // Adjust to your API route
       {},
       {
         headers: {

@@ -32,7 +32,7 @@ export const buildImageUrl = (path) => {
 
   //if path starts with "/Images/", it's likely a relative path from the API, so we need to prepend the base URL.
   if (path.startsWith("/Images/")) {
-    const baseUrl = "http://localhost:5078";
+    const baseUrl = "https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net";
     const cleanBase = (baseUrl || "").replace(/\/$/, "");
     return `${cleanBase}${path}`;
   }

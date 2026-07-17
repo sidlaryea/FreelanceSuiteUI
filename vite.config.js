@@ -10,12 +10,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/Profile-images': {
-        target: 'http://localhost5214:',
+        target: 'https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net',
         changeOrigin: true,
         secure: false,
       },
       '/Images': {
-        target: 'http://localhost:5214',
+        target: 'https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net',
         changeOrigin: true,
         secure: false,
       },

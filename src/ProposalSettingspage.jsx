@@ -11,6 +11,7 @@ import Sidebar from "./components/Sidebar";
 import useSettingsData from "./hooks/useSettingsData";
 import SectionCard from "./components/Settings/SectionCard";
 import TopNav from "./components/Layout/TopNav";
+import { API_BASE_Proposal,API_BASE_Invoice } from "./config/api";
 
 export default function ProposalSettingspage() {
   const [activeNav, setActiveNav] = useState("Settings");
@@ -71,7 +72,7 @@ export default function ProposalSettingspage() {
 
       switch (section) {
         case 'Profile':
-          endpoint = 'http://localhost:5214/api/Register/UpdateUserDetails';
+          endpoint = `${API_BASE_Invoice}/api/Register/UpdateUserDetails`;
           data = {
             firstName: form.firstName,
             middleName: form.middleName,
@@ -83,7 +84,7 @@ export default function ProposalSettingspage() {
           break;
 
         case 'Workspace':
-          endpoint = 'http://localhost:5078/api/Organization/';
+          endpoint = `${API_BASE_Proposal}/api/Organization/`;
           data = {
             businessName: form.businessName,
             email: form.businessEmail,
@@ -100,7 +101,7 @@ export default function ProposalSettingspage() {
           
 
         case 'Payment Setup':
-          endpoint = 'http://localhost:5214/api/PaymentSetup/Update User Payment Setup';
+          endpoint = `${API_BASE_Invoice}/api/PaymentSetup/Update User Payment Setup`;
           data = {
             payStackPublicKey: form.payStackPublicKey,
             payStackSecretkey: form.payStackSecretkey,
@@ -115,13 +116,13 @@ export default function ProposalSettingspage() {
           break;
 
           case 'Api':
-          endpoint = 'http://localhost:5214/api/ApiKey/';
+          endpoint = `${API_BASE_Invoice}/api/ApiKey/`;
           data = {
              key: form.apiKey
           };
           break;
           case 'Security':
-          endpoint = 'http://localhost:5214/api/Register/update-password';
+          endpoint = `${API_BASE_Invoice}/api/Register/update-password`;
           data = {
             currentPassword: form.currentPassword,
             newPassword: form.newPassword,
@@ -174,7 +175,7 @@ export default function ProposalSettingspage() {
     }
 
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/Register/update-password`, {
+      await axios.put(`${API_BASE_Invoice}/api/Register/update-password`, {
         currentPassword,
         newPassword,
         confirmPassword: confirmNewPassword,

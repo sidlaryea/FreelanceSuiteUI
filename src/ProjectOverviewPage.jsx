@@ -5,6 +5,7 @@ import axios from "axios";
 import Sidebar from "./components/Sidebar";
 import CreateProjectModal from "./components/CreateProjectModal";
 import TopNav from "./components/Layout/TopNav";
+import { API_BASE_Invoice } from "./config/api";
 
 
 export default function ProjectOverviewsPage() {
@@ -69,7 +70,7 @@ export default function ProjectOverviewsPage() {
   const apiKey = localStorage.getItem("apiKey");
     try {
       const response = await axios.get(
-        "http://localhost:5214/Proposal/api/ProjectOverview/byUser",
+        `${API_BASE_Invoice}/Proposal/api/ProjectOverview/byUser`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -93,7 +94,7 @@ export default function ProjectOverviewsPage() {
     
     try {
       const response = await axios.get(
-        "http://localhost:5214/api/Register/profile",
+        `${API_BASE_Invoice}/api/Register/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -144,7 +145,7 @@ export default function ProjectOverviewsPage() {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
     try {
-      const response = await axios.get("http://localhost:5214/api/Industries", {
+      const response = await axios.get(`${API_BASE_Invoice}/api/Industries`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -160,7 +161,7 @@ export default function ProjectOverviewsPage() {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
     try {
-      const response = await axios.get("http://localhost:5214/api/Currency/GetAllCurrencies", {
+      const response = await axios.get(`${API_BASE_Invoice}/api/Currency/GetAllCurrencies`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -176,7 +177,7 @@ export default function ProjectOverviewsPage() {
     const token = localStorage.getItem("jwtToken");
     const apiKey = localStorage.getItem("apiKey");
     try {
-      const response = await axios.get("http://localhost:5214/proposal/api/Client/user/", {
+      const response = await axios.get(`${API_BASE_Invoice}/proposal/api/Client/user/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-API-KEY": apiKey
@@ -207,7 +208,7 @@ const createProjectOverview = async (formData) => {
         budgetCurrency:budgetCurrency,
       };
       await axios.post(
-        "http://localhost:5214/proposal/api/ProjectOverview",
+        `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
         payload,
         {
           headers: {

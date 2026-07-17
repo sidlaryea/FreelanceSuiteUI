@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { FilePlus2, UploadCloud, X } from "lucide-react";
 import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_BASE_Invoice } from "../config/api";
 
 const flag = (code) =>
   code?.toUpperCase().replace(/./g, (c) =>
@@ -58,7 +57,7 @@ export default function AddClientModal({
 
   useEffect(() => {
     axios
-      .get("http://localhost:5214/api/Country")
+      .get(`${API_BASE_Invoice}/api/Country`)
       .then((res) => {
         const sortedCountries = res.data.sort((a, b) =>
           a.name.localeCompare(b.name)
