@@ -145,7 +145,7 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
         <p className="text-xs text-white/50 mt-1 flex items-center gap-1">
           Powered by SidConsult
           <img
-            src={`${API_BASE_Proposal}/logo.png`}
+            src="/logo.png"
             alt="SidConsult Logo"
             className="inline-block h-5 ml-1 -mt-0.5"
           />
@@ -236,7 +236,7 @@ export default function Sidebar({ activeNav, setActiveNav, userData }) {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 font-semibold overflow-hidden">
               <img
-                src={userData?.profileImageUrl || `${API_BASE_Proposal}/default-avatar.png`}
+                src={userData?.profileImageUrl || "/user-placeholder.png"}
                 alt={userData?.name || userData?.email || "User avatar"}
                 className="w-full h-full object-cover"
               />

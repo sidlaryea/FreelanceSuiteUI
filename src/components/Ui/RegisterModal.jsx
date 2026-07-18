@@ -19,7 +19,7 @@ export default function FreelancerProLogin() {
           <div>
             
             <h2 className="flex items-center gap-2 text-sm tracking-[4px] text-blue-700 font-medium mb-14">
-              <img src="./logo.png" alt="Logo" className="w-6 h-6" />
+              <img src="/logo.png" alt="Logo" className="w-6 h-6" />
               <span>FREELANCE PRO SUITE</span>
             </h2>
 

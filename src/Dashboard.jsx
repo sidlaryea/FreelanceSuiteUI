@@ -322,7 +322,7 @@ const closeChangePasswordDialog = () => {
         <div className="absolute left-0 top-0 h-full flex items-center px-4">
           <div className="flex items-center space-x-3 group">
             <div className="relative">
-              <img src="./logo.png" alt="InvoiceAPI Logo" className="h-9 w-9 transition-transform group-hover:scale-110" />
+              <img src="/logo.png" alt="InvoiceAPI Logo" className="h-9 w-9 transition-transform group-hover:scale-110" />
               <div className="absolute inset-0 bg-blue-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"></div>
             </div>
             <span className="text-xl font-bold text-blue-600 transition-colors group-hover:text-blue-700">

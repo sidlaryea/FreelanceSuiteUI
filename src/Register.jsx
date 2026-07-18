@@ -86,7 +86,7 @@ const getFlagEmoji = (countryCode) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center">
       <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full">
         <div className="flex flex-col items-center mb-8">
-          <img src="./logo.png" alt="Logo" className="h-12 w-12 mb-2" />
+          <img src="/logo.png" alt="Logo" className="h-12 w-12 mb-2" />
           <h2 className="text-3xl font-bold text-blue-700 mb-2">Create Your Account</h2>
           <p className="text-gray-500 text-center">Start Automating Your Freelance Work!</p>
         </div>

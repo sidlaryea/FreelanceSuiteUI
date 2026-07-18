@@ -98,7 +98,7 @@ export default function ClientSidebar({ proposal }) {
         </h1>
         <p className="text-xs text-white/50 mt-1">
           Powered by SidConsult
-          <img src={`${API_BASE_Proposal}/logo.png`} alt="SidConsult Logo" className="inline-block h-5 ml-1 -mt-0.5" />
+          <img src="/logo.png" alt="SidConsult Logo" className="inline-block h-5 ml-1 -mt-0.5" />
         </p>
       </div>
 

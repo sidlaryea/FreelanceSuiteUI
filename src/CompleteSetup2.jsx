@@ -588,7 +588,7 @@ const validateBeforeFinish = () => {
         {/* Header */}
         
         <div className="cs-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <img src="./logo.png" alt="Logo" className="h-10 w-12 mb-4 mt-2 rounded " />
+        <img src="/logo.png" alt="Logo" className="h-10 w-12 mb-4 mt-2 rounded " />
         
           <div className="cs-header-title" style={{ marginTop: '16px' }}>Welcome! {firstName} Lets Create Your First Proposal</div>
           <div className="cs-header-sub">Help us personalize your Proposal by completing these four quick steps.</div>

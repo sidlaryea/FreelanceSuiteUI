@@ -50,7 +50,7 @@ const ProfileImageUrl = profileImageUrl && profileImageUrl !== "null" && profile
           </button>
           <div className="relative">
             <img
-              src="./logo.png"
+              src="/logo.png"
               alt="InvoiceAPI Logo"
               className="h-9 w-9 transition-transform group-hover:scale-110"
             />
