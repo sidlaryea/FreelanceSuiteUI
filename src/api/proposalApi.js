@@ -12,28 +12,28 @@ const publicHeaders = () => {
 };
 
 export const getPublicProposal = async (token) => {
-  const response = await axios.get(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/Proposal/p/${token}`, {
+  const response = await axios.get(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/p/${token}`, {
     headers: publicHeaders(),
   });
   return response.data;
 };
 
 export const getPublicProposalByPublicId = async (publicId) => {
-  const response = await axios.get(`/Proposal/api/Proposal/public/${publicId}`, {
+  const response = await axios.get(`/api/Proposal/public/${publicId}`, {
     headers: publicHeaders(),
   });
   return response.data;
 };
 
 export const acceptPublicProposal = async (token, data = {}) => {
-  const response = await axios.post(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/Proposal/p/${token}/accept`, data, {
+  const response = await axios.post(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/p/${token}/accept`, data, {
     headers: publicHeaders(),
   });
   return response.data;
 };
 
 export const rejectPublicProposal = async (token) => {
-  const response = await axios.post(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/Proposal/p/${token}/reject`, {}, {
+  const response = await axios.post(`https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/p/${token}/reject`, {}, {
     headers: publicHeaders(),
   });
   return response.data;
