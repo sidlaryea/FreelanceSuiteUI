@@ -32,7 +32,7 @@ export default function ProposalCoverPage({ userData, client }) {
         {/* Logo Placeholder */}
         <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
           <img
-            src={`${API_BASE_Proposal}${userData?.logoUrl || userData?.logo}  `}
+            src={userData?.logoUrl || userData?.logo || "/logo.png"}
             alt="Company Logo"
             className="w-12 h-12 object-contain"
           />
