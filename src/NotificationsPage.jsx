@@ -3,18 +3,8 @@ import axios from "axios";
 import { useNotifications } from "./Context/NotificationContext";
 import TopNav from "./components/Layout/TopNav";
 import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
-
 import { useMemo, useState, useEffect } from "react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
-
+import {ResponsiveContainer,LineChart,Line,CartesianGrid,XAxis,YAxis,Tooltip,} from "recharts";
 import { Trash2, CheckSquare } from "lucide-react";
 import { useToast } from "./components/ToastProvider";
 
@@ -687,7 +677,8 @@ const renderNotificationList = () => {
                           </div>
                         ) : (
                           <div className="space-y-4">
-                            {notifications.slice(0, 5).map((item) => (
+                            {Array.isArray(notifications) &&
+  notifications.slice(0, 5).map((item) => (
                               <div
                                 key={item.id}
                                 className="border-b border-slate-100 pb-3"
