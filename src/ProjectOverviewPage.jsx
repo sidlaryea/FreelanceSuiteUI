@@ -208,7 +208,7 @@ const createProjectOverview = async (formData) => {
         budgetCurrency:budgetCurrency,
       };
       await axios.post(
-        `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
+        `${API_BASE_Proposal}/api/ProjectOverview`,
         payload,
         {
           headers: {

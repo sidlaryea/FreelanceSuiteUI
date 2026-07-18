@@ -33,7 +33,7 @@ export default function FinalProposalPage() {
 
     try {
       const response = await axios.get(
-        `${API_BASE_Invoice}/Proposal/api/proposal/${id}`, // Adjust endpoint as needed
+        `${API_BASE_Proposal}/api/proposal/${id}`, // Adjust endpoint as needed
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ export default function FinalProposalPage() {
 
     try {
       await axios.post(
-        `${API_BASE_Invoice}/Proposal/api/Proposal/${id}/send`,
+        `${API_BASE_Proposal}/api/Proposal/${id}/send`,
         
         {},
         

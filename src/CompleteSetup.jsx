@@ -108,7 +108,7 @@ export default function CompleteSetup() {
     };
 
     const projectResponse = await axios.post(
-      `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
+      `${API_BASE_Proposal}/api/ProjectOverview`,
       projectPayload,
       {
         headers: {
@@ -122,7 +122,7 @@ export default function CompleteSetup() {
       projectResponse.data.requirementId || projectResponse.data.id;
 
     const previewResponse = await axios.post(
-      `${API_BASE_Invoice}/proposal/api/ProposalAi/generate-preview/${newRequirementId}`,
+      `${API_BASE_Proposal}/api/ProposalAi/generate-preview/${newRequirementId}`,
       {},
       {
         headers: {
@@ -182,7 +182,7 @@ export default function CompleteSetup() {
       };
 
       const clientResponse = await axios.post(
-        `${API_BASE_Invoice}/proposal/api/Client`,
+        `${API_BASE_Proposal}/api/Client`,
         clientInfoPayload,
         { headers: { Authorization: `Bearer ${token}`, "X-API-KEY": apiKey } }
       );
@@ -195,7 +195,7 @@ export default function CompleteSetup() {
         logoData.append("file", logo);
 
         await axios.post(
-          `${API_BASE_Invoice}/proposal/api/Client/update-logo/${clientId}`,
+          `${API_BASE_Proposal}/api/Client/update-logo/${clientId}`,
           logoData,
           {
             headers: {
@@ -219,7 +219,7 @@ export default function CompleteSetup() {
       };
 
       await axios.post(
-        `${API_BASE_Invoice}/proposal/api/ProjectOverview`,
+        `${API_BASE_Proposal}/api/ProjectOverview`,
         projectPayload,
         { headers: { Authorization: `Bearer ${token}`, "X-API-KEY": apiKey } }
       );

@@ -280,7 +280,7 @@ if (orgLogoFile && orgId) {
   const logoData = new FormData();
   logoData.append("file", orgLogoFile);
   await axios.post(
-    `${API_BASE_Invoice}/proposal/api/Organization/update-logo/${orgId}`,
+    `${API_BASE_Proposal}/api/Organization/update-logo/${orgId}`,
 
     logoData,
     {

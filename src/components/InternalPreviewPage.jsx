@@ -18,7 +18,7 @@ export default function InternalPreviewPage() {
 
   try {
     const res = await axios.get(
-      `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${draftId}`,
+      `${API_BASE_Proposal}/api/ProposalDraft/${draftId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

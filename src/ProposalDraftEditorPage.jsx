@@ -13,7 +13,7 @@ import ProposalScopeSection from "./components/ProposalScopeSection";
 import TimelineSection from "./components/TimelineSection";
 import DeliverableSection from "./components/DeliverableSection";
 import ProposalPreviewModal from "./components/ProposalPreviewModal";
-import { API_BASE_Invoice } from "./config/api";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 
 
@@ -90,7 +90,7 @@ const getStatusStyles = (color) => {
 
     try {
       const response = await axios.get(
-        `${API_BASE_Invoice}/Proposal/api/ProposalDraft/${id}`,
+        `${API_BASE_Proposal}/api/ProposalDraft/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

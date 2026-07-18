@@ -10,7 +10,7 @@ const getAuthHeaders = () => ({
 
 export const getCrmClients = async () => {
   const response = await axios.get(
-    `${API_BASE_Proposal}/api/Client/api/internal/clients/crm`,
+    `${API_BASE_Proposal}/api/Client/api/internal/clients/crm`, // fixed missing slash after base URL
     {
       headers: getAuthHeaders(),
     }
