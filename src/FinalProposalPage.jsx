@@ -78,7 +78,7 @@ export default function FinalProposalPage() {
 
     const baseUrl = "https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net";
     const normalizedBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    const url = `${window.location.origin}${normalizedBase}/proposal/${proposal.publicToken}`;
+    const url = `${normalizedBase}/proposal/${proposal.publicToken}`;
     const button = event?.currentTarget;
     const original = button?.textContent;
 
