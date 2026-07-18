@@ -4,6 +4,7 @@ import ClientLayout from "./ClientLayout";
 import { getPublicProposal } from "./api/proposalApi";
 import DOMPurify from "dompurify";
 import ProposalCoverPage from "./components/CoverPage";
+import { API_BASE_Invoice,API_BASE_Proposal } from "./config/api";
 
 
 
@@ -187,7 +188,7 @@ export default function ClientProposalPage() {
         <>
           <p className="mt-2 text-sm text-amber-600 font-medium flex items-center gap-2">
             <img
-              src={`${import.meta.env.BASE_URL}logos/accepted.png`}
+              src={`${API_BASE_Proposal}logos/accepted.png`}
               alt="Pending Payment"
               className="h-5 w-5"
             />
@@ -215,7 +216,7 @@ export default function ClientProposalPage() {
         <>
           <p className="mt-2 text-sm text-blue-600 font-medium flex items-center gap-2">
             <img
-              src={`${import.meta.env.BASE_URL}logos/partial-payment.png`}
+              src={`${API_BASE_Proposal}logos/partial-payment.png`}
               alt="Partial Payment"
               className="h-5 w-5"
             />
@@ -259,7 +260,7 @@ export default function ClientProposalPage() {
         <>
           <p className="mt-2 text-sm text-emerald-600 font-medium flex items-center gap-2">
             <img
-              src={`${import.meta.env.BASE_URL}logos/accepted.png`}
+              src={`${API_BASE_Proposal}logos/accepted.png`}
               alt="Paid"
               className="h-5 w-5"
             />

@@ -51,7 +51,7 @@ export default function ProposalSettingspage() {
 
   const userData = {
     company: form.organizationName || "Your account",
-    profileImageUrl: profileImageUrl || `${import.meta.env.BASE_URL}/default-avatar.png`,
+    profileImageUrl: profileImageUrl || `${API_BASE_Proposal}/default-avatar.png`,
     //name: `${form.firstName || ""} ${form.lastName || ""}`.trim() || form.email || "User",
     email: form.email || "",
   };

@@ -11,6 +11,7 @@ import {
 } from "../services/SettingsService";
 
 import { buildImageUrl } from "../Utils/SettingsHelpers";
+import { API_BASE_Invoice,API_BASE_Proposal } from "../config/api";
 
 export default function useSettingsData() {
   const [countries, setCountries] = useState([]);
@@ -229,7 +230,7 @@ export default function useSettingsData() {
     formDataUpload.append("imageFile", selectedFile);
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/Register/update-profile-image`, formDataUpload, {
+      const response = await axios.put(`${API_BASE_Invoice}/api/Register/update-profile-image`, formDataUpload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

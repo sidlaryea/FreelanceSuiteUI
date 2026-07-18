@@ -168,7 +168,7 @@ const plan = subscriptionSummary?.planName;
         userData={
           userData || {
             company: "Workspace",
-            profileImageUrl: `${import.meta.env.BASE_URL}/default-avatar.png`,
+            profileImageUrl: `${API_BASE_Proposal}/default-avatar.png`,
             name: "User",
             email: "",
           }

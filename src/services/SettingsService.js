@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL;
+const API = "https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net"
 
 export const getCountries = async () => {
   const res = await axios.get(`${API}/api/Country`);
@@ -29,7 +29,7 @@ export const getProfile = async (token) => {
 
 export const getOrganization = async (token, apiKey) => {
   const res = await axios.get(
-    `${API}/proposal/api/Organization/user`,
+    `https://freelancepro-gmdgggdtdhcqa7bd.southafricanorth-01.azurewebsites.net/api/Organization/user`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
