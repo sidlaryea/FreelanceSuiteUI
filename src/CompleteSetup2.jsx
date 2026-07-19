@@ -264,7 +264,7 @@ const orgInfoPayload = {
     website: form.organizationWebsite,
 };
 const response = await axios.post(
-  `${API_BASE_Proposal}/api/Organization`,
+  `${API_BASE_Invoice}/Proposal/api/Organization`,
   orgInfoPayload,
   {
     headers: {
