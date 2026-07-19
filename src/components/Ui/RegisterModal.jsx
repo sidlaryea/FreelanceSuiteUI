@@ -79,9 +79,9 @@ export default function FreelancerProLogin() {
 
             <GoogleLogin
   onSuccess={async (credentialResponse) => {
-    const API_URL = import.meta.env.VITE_API_URL;
+    
     const result = await axios.post(
-      `${API_URL}/api/Login/google-login`,
+      `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/Login/google-login`,
       {
         idToken: credentialResponse.credential,
       }
