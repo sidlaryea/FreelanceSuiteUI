@@ -3,7 +3,7 @@ import axios from "axios";
 //import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL;
+//const API_URL = import.meta.env.VITE_API_URL;
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./assets/onboard.css";
@@ -264,7 +264,7 @@ const orgInfoPayload = {
     website: form.organizationWebsite,
 };
 const response = await axios.post(
-  `${API_URL}/proposal/api/Organization`,
+  `${API_BASE_Proposal}/api/Organization`,
   orgInfoPayload,
   {
     headers: {
@@ -313,7 +313,7 @@ const saveClientInfo = async () => {
   };
 
   const response = await axios.post(
-    `${API_URL}/proposal/api/Client`,
+    `${API_BASE_Proposal}/api/Client`,
     clientInfoPayload,
     {
       headers: {
@@ -334,7 +334,7 @@ const saveClientInfo = async () => {
     logoData.append("file", clientLogoFile);
 
     await axios.post(
-      `${API_URL}/proposal/api/Client/update-logo/${clientId}`,
+      `${API_BASE_Proposal}/api/Client/update-logo/${clientId}`,
       logoData,
       {
         headers: {
@@ -372,7 +372,7 @@ const saveClientInfo = async () => {
   try {
 
     const response = await axios.post(
-      `${API_URL}/proposal/api/ProjectOverview`,
+      `${API_BASE_Proposal}/api/ProjectOverview`,
       projectPayload,
       {
         headers: {
@@ -415,7 +415,7 @@ const saveClientInfo = async () => {
   try {
 
     const previewResponse = await axios.post(
-      `${API_URL}/proposal/api/ProposalAi/generate-preview/${form.requirementId || requirementId}`,
+      `${API_BASE_Proposal}/api/ProposalAi/generate-preview/${form.requirementId || requirementId}`,
       {},
       {
         headers: {
@@ -433,7 +433,7 @@ const saveClientInfo = async () => {
     const idToSave = form.requirementId || requirementId;
     if (idToSave) {
       await axios.put(
-        `${API_URL}/proposal/api/ProposalAi/update-preview/${idToSave}`,
+        `${API_BASE_Proposal}/api/ProposalAi/update-preview/${idToSave}`,
         { html: preview },
         {
           headers: {

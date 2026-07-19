@@ -96,7 +96,7 @@ export default function AddClientModal({
       logoData.append("file", file);
 
       await axios.post(
-        `${API_URL}/proposal/api/Client/update-logo/${clientId}`,
+        `${API_BASE_Proposal}/api/Client/update-logo/${clientId}`,
         logoData,
         {
           headers: {
@@ -142,7 +142,7 @@ export default function AddClientModal({
       };
 
       const res = await axios.post(
-        `${API_URL}/Proposal/api/Client`,
+        `${API_BASE_Proposal}/api/Client`,
         payload,
         {
           headers: {
