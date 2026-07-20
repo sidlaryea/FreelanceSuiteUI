@@ -3,7 +3,7 @@ import axios from "axios";
 //import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-//const API_URL = import.meta.env.VITE_API_URL;
+
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import "./assets/onboard.css";
@@ -473,7 +473,7 @@ const savePaymentSetup = async () => {
   };
 
   await axios.post(
-    `${API_URL}/api/PaymentSetup/Save User Payment Setup`,
+    `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/PaymentSetup/Save User Payment Setup`,
     paymentPayload,
     {
       headers: {
@@ -487,7 +487,7 @@ const handleFinish = async () => {
    const token = localStorage.getItem("jwtToken");
   const apiKey = localStorage.getItem("apiKey");
   const statusRes = await axios.get(
-    `${API_URL}/api/onboarding/status`,
+    `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/onboarding/status`,
     { headers: {
         Authorization: `Bearer ${token}`,
         "X-API-KEY": apiKey
