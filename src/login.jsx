@@ -157,7 +157,7 @@ console.log(
         
 
       if (!apiKey) {
-        console.warn("API key missing in response.", apiRes?.data);
+        console.warn("API key missing in responses.", apiRes?.data);
         setError("API key not returned by server.");
         return;
       }
