@@ -1,16 +1,21 @@
+import { buildImageUrl } from "../Utils/SettingsHelpers";
+
 const ProposalHeader = ({ proposal }) => {
+  // Resolve logo URL: handle relative paths from the API
+  const logoUrl = buildImageUrl(proposal?.organization?.logoUrl || proposal?.organization?.logo);
+
   return (
     <div className="w-full border-b bg-white px-6 py-4 flex items-center justify-between">
       
       {/* Left - Logo */}
       <div className="flex items-center gap-3">
         <img
-          src={proposal.companyLogo}
+          src={logoUrl}
           alt="Company Logo"
           className="h-10 w-10 object-contain"
         />
         <span className="font-semibold text-gray-800 text-lg">
-          {proposal.companyName || "Your Company"}
+          {proposal?.organization?.name || proposal.companyName || "Your Company"}
         </span>
       </div>
 

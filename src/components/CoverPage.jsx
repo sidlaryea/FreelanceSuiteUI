@@ -1,13 +1,16 @@
 
+import { buildImageUrl } from "../Utils/SettingsHelpers";
+
 export default function ProposalCoverPage({ userData, client }) {
 
   console.log("=== ProposalCoverPage Debug ===");
   console.log("userData:", userData);
-  console.log("userData.logo:", userData?.logo);
+ 
   console.log("client:", client);
   console.log("client.logo:", client?.logo);
 
-
+  // Resolve logo URL: handle relative paths from the API (e.g. "/Images/uploads/...")
+  const logoUrl = buildImageUrl(userData?.logoUrl);
 
   return (
     <div
@@ -32,7 +35,7 @@ export default function ProposalCoverPage({ userData, client }) {
         {/* Logo Placeholder */}
         <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
           <img
-            src={userData?.logoUrl || userData?.logo || "/logo.png"}
+            src={logoUrl}
             alt="Company Logo"
             className="w-12 h-12 object-contain"
           />
