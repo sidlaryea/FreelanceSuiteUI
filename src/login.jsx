@@ -54,6 +54,7 @@ export default function Login() {
 
         const apiKey = apiRes.data.key;
         if (!apiKey) {
+          console.log("API Key Response:", apiRes.data);
           console.warn("API key missing in response.");
           setError("API key not returned.");
           return;

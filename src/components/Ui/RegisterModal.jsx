@@ -52,11 +52,7 @@ export default function FreelancerProLogin() {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-gray-300 pt-8 grid grid-cols-3 gap-8">
-            <Stat value="3.1 days" label="AVG COLLECTION" />
-            <Stat value="12 min" label="SAVED / PROPOSAL" />
-            <Stat value="$0 fees" label="ON PAYOUTS" />
-          </div>
+          
         </div>
 
         {/* Right Panel */}
