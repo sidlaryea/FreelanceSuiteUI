@@ -132,9 +132,20 @@ try {
     }
   );
 
-  console.log("=== API Key Request Completed ===");
-  console.log("Status:", apiRes.status);
-  console.log("Response data:", apiRes.data);
+  console.log(
+  "API Key Response JSON:",
+  JSON.stringify(apiRes.data, null, 2)
+);
+
+console.log(
+  "API Key Response Type:",
+  typeof apiRes.data
+);
+
+console.log(
+  "API Key Keys:",
+  Object.keys(apiRes.data || {})
+);
 
 } catch (error) {
   console.error("=== API Key Request Failed ===");
@@ -142,12 +153,8 @@ try {
   console.error("Response:", error.response?.data);
   console.error("Status:", error.response?.status);
 }
-      const apiKey =
-        apiRes?.data?.key ??
-        apiRes?.data?.apiKey ??
-        apiRes?.data?.APIKey ??
-        apiRes?.data?.data?.key ??
-        apiRes?.data?.data?.apiKey;
+      const apiKey =apiRes.data.key;
+        
 
       if (!apiKey) {
         console.warn("API key missing in response.", apiRes?.data);
