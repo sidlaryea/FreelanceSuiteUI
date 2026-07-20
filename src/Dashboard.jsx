@@ -239,7 +239,7 @@ const closeChangePasswordDialog = () => {
 
         // Fetch API key info
         const apiRes = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/ApiKey`,
+          `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
