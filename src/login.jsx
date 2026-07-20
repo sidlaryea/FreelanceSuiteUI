@@ -58,8 +58,12 @@ export default function Login() {
         console.log("API Key Response:", apiRes?.data);
 
         // Backend response shape can vary (key vs apiKey, nested data, etc.)
-        const apiKey = apiRes.data.key;
-          
+        const apiKey =
+          apiRes?.data?.key ??
+          apiRes?.data?.apiKey ??
+          apiRes?.data?.APIKey ??
+          apiRes?.data?.data?.key ??
+          apiRes?.data?.data?.apiKey;
 
         if (!apiKey) {
           console.warn("API key missing in response.", apiRes?.data);
@@ -108,7 +112,11 @@ export default function Login() {
 
       const token = localStorage.getItem("jwtToken");
 
+      console.log("Google jwtToken:", token);
+      console.log("Calling /api/ApiKey with token length:", token?.length);
+
       const apiRes = await axios.get(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`, {
+
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
