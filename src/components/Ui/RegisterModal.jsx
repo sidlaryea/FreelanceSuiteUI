@@ -99,7 +99,7 @@ localStorage.setItem("countryCode", decodedToken.CountryCode);
  const token = localStorage.getItem("jwtToken");
      // Fetch API key info
             const apiRes = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/ApiKey`,
+              `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -111,7 +111,7 @@ localStorage.setItem("countryCode", decodedToken.CountryCode);
             
             const apiKey = apiRes.data.key;
             if (!apiKey) {
-            console.warn("API key missing in response.");
+            console.warn("API key missing in response.s");
             //setError("API key not returned.");
             return;
           }
