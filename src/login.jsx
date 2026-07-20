@@ -45,23 +45,33 @@ export default function Login() {
         localStorage.setItem("jwtToken", token);
 
         // Fetch API key info
-        const apiRes = await axios.get(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const apiRes = await axios.get(
+          `https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
+        console.log("API Key Response:", apiRes?.data);
+
+        // Backend response shape can vary (key vs apiKey, nested data, etc.)
         const apiKey = apiRes.data.key;
+          
+
         if (!apiKey) {
-          console.log("API Key Response:", apiRes.data);
-          console.warn("API key missing in response.");
-          setError("API key not returned.");
+          console.warn("API key missing in response.", apiRes?.data);
+          setError("API key not returned by server.");
           return;
         }
 
         localStorage.setItem("apiKey", apiKey);
-        localStorage.setItem("setupComplete", proposalSetupComplete ? "true" : "false");
+        localStorage.setItem(
+          "setupComplete",
+          proposalSetupComplete ? "true" : "false"
+        );
 
         if (proposalSetupComplete) {
           navigate("/dashboard");
@@ -105,10 +115,18 @@ export default function Login() {
         },
       });
 
-      const apiKey = apiRes.data.key;
+      console.log("API Key Response:", apiRes?.data);
+
+      const apiKey =
+        apiRes?.data?.key ??
+        apiRes?.data?.apiKey ??
+        apiRes?.data?.APIKey ??
+        apiRes?.data?.data?.key ??
+        apiRes?.data?.data?.apiKey;
+
       if (!apiKey) {
-        console.warn("API key missing in response.");
-        setError("API key not returned.");
+        console.warn("API key missing in response.", apiRes?.data);
+        setError("API key not returned by server.");
         return;
       }
 
