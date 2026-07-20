@@ -95,7 +95,7 @@ export default function Login() {
     try {
       setError("");
 
-      const API_URL = import.meta.env.VITE_API_URL;
+      
       const result = await axios.post(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/Login/google-login`, {
         idToken: credentialResponse.credential,
       });
@@ -112,19 +112,36 @@ export default function Login() {
 
       const token = localStorage.getItem("jwtToken");
 
-      console.log("Google jwtToken:", token);
-      console.log("Calling /api/ApiKey with token length:", token?.length);
+console.log("=== Before API Key Request ===");
+console.log("Token exists:", !!token);
+console.log("Token length:", token?.length);
 
-      const apiRes = await axios.get(`https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey`, {
+let apiRes;
 
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+try {
+  console.log("Calling /api/ApiKey now...");
 
-      console.log("API Key Response:", apiRes?.data);
+  apiRes = await axios.get(
+    "https://invoiceapi-gcc3duhbc4age6bw.southafricanorth-01.azurewebsites.net/api/ApiKey",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+      validateStatus: () => true
+    }
+  );
 
+  console.log("=== API Key Request Completed ===");
+  console.log("Status:", apiRes.status);
+  console.log("Response data:", apiRes.data);
+
+} catch (error) {
+  console.error("=== API Key Request Failed ===");
+  console.error("Error:", error);
+  console.error("Response:", error.response?.data);
+  console.error("Status:", error.response?.status);
+}
       const apiKey =
         apiRes?.data?.key ??
         apiRes?.data?.apiKey ??
